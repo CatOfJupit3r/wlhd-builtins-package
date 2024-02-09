@@ -8,6 +8,7 @@
     "game_log": "Журнал гри:",
     "turn_message": "Хід {0}!",
     "game_started": "Гра розпочалася!",
-    "game_ended": "Гра завершилася!",
+    "game_finished": "Гра завершилася! Результат: {0}",
+    "game_finished_with_error": "Гра завершилася з помилкою!",
     "timeout": "Час вийшов!"
 }
