@@ -1,0 +1,69 @@
+{
+    "fainted": {
+        "localization_id": "fainted",
+        "duration": null,
+        "static": false,
+        "visibility": true,
+        "activate_on_use": true,
+        "update_type": "round_beginning",
+        "activation_type": "one_time",
+        "triggered_by_host": true,
+        "method_variables": {
+            "state": "builtins::can_act"
+        },
+        "method_functions": {
+            "dispell": "builtins::state_change_dispell",
+            "activate": "builtins::state_change_activate",
+            "update": null,
+            "apply": null
+        }
+    },
+    "error_se": {
+        "localization_id": "error_se",
+        "duration": null,
+        "static": false,
+        "visibility": false,
+        "activate_on_use": true,
+        "update_type": "round_beginning",
+        "activation_type": "round_beginning",
+        "triggered_by_host": true,
+        "method_functions": {
+            "activate": null,
+            "update": null,
+            "dispell": null,
+            "apply": null
+        }
+    },
+    "marked_for_deletion": {
+        "localization_id": "marked_for_deletion",
+        "duration": 1,
+        "static": false,
+        "visibility": false,
+        "activate_on_use": true,
+        "update_type": "round_beginning",
+        "activation_type": "round_beginning",
+        "triggered_by_host": true,
+        "method_functions": {
+            "activate": null,
+            "update": null,
+            "dispell": null,
+            "apply": null
+        }
+    },
+    "moved": {
+        "localization_id": "moved",
+        "duration": 1,
+        "static": false,
+        "visibility": false,
+        "activate_on_use": true,
+        "update_type": "round_beginning",
+        "activation_type": "round_beginning",
+        "triggered_by_host": true,
+        "method_functions": {
+            "activate": null,
+            "update": null,
+            "dispell": null,
+            "apply": null
+        }
+    }
+}

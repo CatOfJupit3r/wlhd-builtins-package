@@ -1,0 +1,245 @@
+{
+    "target_dummy": {
+        "class": "entity",
+        "race_of_creature": "mechanoid",
+        "controlled_by": {
+            "player_id": null,
+            "ai": "default"
+        },
+        "initiative": 0,
+        "bonus_dictionary": {
+            "health": {
+                "current": 30,
+                "max": 30
+            },
+            "armor": {
+                "current": 12,
+                "base": 12
+            },
+            "action_points": {
+                "current": 0,
+                "max": 2
+            },
+            "weapon_attack_bonus": 0,
+            "weapon_heal_bonus": 0,
+            "initiative": 0,
+            "athletics": 0,
+            "caution": 0,
+            "dexterity": 0,
+            "persuasion": 0,
+            "medicine": 0,
+            "reflexes": 0,
+            "strength": 0,
+            "will": 0,
+            "builtins::physical_attack": 0,
+            "builtins::physical_defense": 0,
+            "builtins::fire_attack": 0,
+            "builtins::fire_defense": 0,
+            "builtins::air_attack": 0,
+            "builtins::air_defense": 0,
+            "builtins::water_attack": 0,
+            "builtins::water_defense": 0,
+            "builtins::earth_attack": 0,
+            "builtins::earth_defense": 0,
+            "builtins::light_attack": 0,
+            "builtins::light_defense": 0,
+            "builtins::dark_attack": 0,
+            "builtins::dark_defense": 0,
+            "builtins::nature_attack": 0,
+            "builtins::nature_defense": 0
+        },
+        "level": 1,
+        "spell_book": {},
+        "status_effects": {},
+        "inventory": {},
+        "ability_points": {
+            "reflexes": 0,
+            "strength": 0,
+            "will": 0
+        },
+        "states": {
+            "builtins::can_move": 1,
+            "builtins::can_act": 1,
+            "builtins::can_attack": 1,
+            "builtins::can_spell": 1,
+            "builtins::damageable": 1,
+            "builtins::visible": 1,
+            "builtins::playable": 1,
+            "builtins::adrenaline": 0,
+            "builtins::fainted`": 0,
+            "builtins::alive": 1
+        },
+        "cost_dictionary": {
+            "builtins::move": 1,
+            "builtins::spell": 1,
+            "builtins::use": 1,
+            "builtins::pass": 0,
+            "builtins::attack": 1,
+            "builtins::defend": 1
+        }
+    },
+    "target_dummy_large": {
+        "class": "entity",
+        "race_of_creature": "mechanoid",
+        "controlled_by": {
+            "main": "discord",
+            "discord": "282532305510203422"
+        },
+        "initiative": 0,
+        "bonus_dictionary": {
+            "health": {
+                "current": 30,
+                "max": 30
+            },
+            "armor": {
+                "current": 0,
+                "base": 0
+            },
+            "action_points": {
+                "current": 0,
+                "max": 2
+            },
+            "weapon_attack_bonus": 0,
+            "weapon_heal_bonus": 0,
+            "initiative": 0,
+            "athletics": 0,
+            "caution": 0,
+            "dexterity": 0,
+            "persuasion": 0,
+            "medicine": 0,
+            "reflexes": 0,
+            "strength": 0,
+            "will": 0,
+            "builtins::physical_attack": 0,
+            "builtins::physical_defense": 0,
+            "builtins::fire_attack": 0,
+            "builtins::fire_defense": 0,
+            "builtins::air_attack": 0,
+            "builtins::air_defense": 0,
+            "builtins::water_attack": 0,
+            "builtins::water_defense": 0,
+            "builtins::earth_attack": 0,
+            "builtins::earth_defense": 0,
+            "builtins::light_attack": 0,
+            "builtins::light_defense": 0,
+            "builtins::dark_attack": 0,
+            "builtins::dark_defense": 0,
+            "builtins::nature_attack": 0,
+            "builtins::nature_defense": 0
+        },
+        "level": 1,
+        "spell_book": {},
+        "status_effects": {
+            "builtins::moved": 2
+        },
+        "inventory": [
+            {
+                "healing_potion": {}
+            }
+        ],
+        "ability_points": {
+            "reflexes": 0,
+            "strength": 0,
+            "will": 0
+        },
+        "states": {
+            "builtins::can_move": 1,
+            "builtins::can_act": 0,
+            "builtins::can_attack": 1,
+            "builtins::can_spell": 1,
+            "builtins::damageable": 1,
+            "builtins::visible": 1,
+            "builtins::playable": 1,
+            "builtins::adrenaline": 0,
+            "builtins::fainted": 0,
+            "builtins::alive": 1
+        },
+        "cost_dictionary": {
+            "builtins::move": 1,
+            "builtins::spell": 1,
+            "builtins::use": 1,
+            "builtins::pass": 0,
+            "builtins::attack": 1,
+            "builtins::defend": 1
+        }
+    },
+    "invisible_demon": {
+        "class": "entity",
+        "race_of_creature": "demon",
+        "controlled_by": {
+            "player_id": null,
+            "ai": "default"
+        },
+        "initiative": 0,
+        "bonus_dictionary": {
+            "health": {
+                "current": 30,
+                "max": 30
+            },
+            "armor": {
+                "current": 0,
+                "base": 0
+            },
+            "action_points": {
+                "current": 0,
+                "max": 2
+            },
+            "weapon_attack_bonus": 0,
+            "weapon_heal_bonus": 0,
+            "initiative": 0,
+            "athletics": 0,
+            "caution": 0,
+            "dexterity": 0,
+            "persuasion": 0,
+            "medicine": 0,
+            "reflexes": 0,
+            "strength": 0,
+            "will": 0,
+            "builtins::physical_attack": 0,
+            "builtins::physical_defense": 0,
+            "builtins::fire_attack": 0,
+            "builtins::fire_defense": 0,
+            "builtins::air_attack": 0,
+            "builtins::air_defense": 0,
+            "builtins::water_attack": 0,
+            "builtins::water_defense": 0,
+            "builtins::earth_attack": 0,
+            "builtins::earth_defense": 0,
+            "builtins::light_attack": 0,
+            "builtins::light_defense": 0,
+            "builtins::dark_attack": 0,
+            "builtins::dark_defense": 0,
+            "builtins::nature_attack": 0,
+            "builtins::nature_defense": 0
+        },
+        "level": 1,
+        "spell_book": {},
+        "status_effects": {},
+        "inventory": {},
+        "ability_points": {
+            "reflexes": 0,
+            "strength": 0,
+            "will": 0
+        },
+        "states": {
+            "builtins::can_move": 1,
+            "builtins::can_act": 0,
+            "builtins::can_attack": 1,
+            "builtins::can_spell": 1,
+            "builtins::damageable": 1,
+            "builtins::visible": 0,
+            "builtins::playable": 1,
+            "builtins::adrenaline": 0,
+            "builtins::fainted": 0,
+            "builtins::alive": 1
+        },
+        "cost_dictionary": {
+            "builtins::move": 1,
+            "builtins::spell": 1,
+            "builtins::use": 1,
+            "builtins::pass": 0,
+            "builtins::attack": 1,
+            "builtins::defend": 1
+        }
+    }
+}

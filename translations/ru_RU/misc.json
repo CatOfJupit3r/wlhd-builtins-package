@@ -1,0 +1,20 @@
+{
+    "fire": "огонь",
+    "water": "вода",
+    "earth": "земля",
+    "air": "воздух",
+    "light": "свет",
+    "dark": "тьма",
+    "nature": "природа",
+    "strength": "сила",
+    "reflexes": "рефлексы",
+    "will": "воля",
+    "initiative": "инициатива",
+    "athletics": "атлетика",
+    "caution": "внимательность",
+    "dexterity": "сноровка",
+    "persuasion": "убеждение",
+    "medicine": "медицина",
+    "empty": "пусто",
+    "unknown": "неизвестно"
+}

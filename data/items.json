@@ -1,0 +1,16 @@
+{
+    "test_item": {
+        "descriptor": "test_item",
+        "usage_cost": 0, 
+        "cooldown": 0, 
+        "is_consumable": false, 
+        "type": "generic", 
+        "quantity": 0, 
+        "can_be_used_on_ranges": null,
+        "caster_must_be_in_range": null, 
+        "max_consecutive_uses": null, 
+        "method_variables": {}, 
+        "applies": [], 
+        "function": null
+    }
+}
