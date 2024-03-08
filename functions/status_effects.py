@@ -12,7 +12,7 @@ def default_apply_function(hooks: HookContext, target: Entity, applied_by: Entit
     if target is None:
         raise ValueError("No target!")
     status_effect.owner = copy.deepcopy(applied_by)
-    status_effect.target = target
+    status_effect.target_id = target.id
     if status_effect not in target.status_effects:
         target.status_effects.add_effect(status_effect)
         if status_effect.activates_when_applied is True:
@@ -26,8 +26,9 @@ def default_apply_function(hooks: HookContext, target: Entity, applied_by: Entit
         
 
 def default_dispel_function(hooks: HookContext, status_effect: StatusEffect, **kwargs) -> None:
-    if status_effect.target is not None:
-        status_effect.target.status_effects.remove_effect(status_effect)
+    target = kwargs.get("target")
+    if target is not None:
+        target.status_effects.remove_effect(status_effect)
     return None
 
 
@@ -63,7 +64,7 @@ ATTRIBUTE CHANGING STATUS EFFECTS
 
 
 def attribute_change_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target: Entity = status_effect.target
+    target: Entity = kwargs.get("target")
     if target is None:
         return 0
     target.change_attribute(hooks, status_effect.method_variables['attribute'], status_effect.method_variables['value'])
@@ -71,7 +72,7 @@ def attribute_change_activate(hooks: HookContext, status_effect: StatusEffect, *
 
 
 def attribute_change_dispel(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target: Entity = status_effect.target
+    target: Entity = kwargs.get("target")
     if target is None:
         return 0
     target.change_attribute(hooks, status_effect.method_variables['attribute'], -status_effect.method_variables['value'])
@@ -86,8 +87,8 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A CERTAIN VALUE
 
 
 def hp_change_by_value_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target_of_debuff: Entity = status_effect.target
-    if target_of_debuff is None:
+    target = kwargs.get("target")
+    if target is None:
         return 0
     if status_effect.owner is not None:
         damage = status_effect.method_variables["value"] + status_effect.owner.get_bonus(status_effect["element_of_hp_change"] + '_attack')
@@ -99,7 +100,7 @@ def hp_change_by_value_activate(hooks: HookContext, status_effect: StatusEffect,
         element_of_hp_change=status_effect.method_variables['element_of_hp_change'],
         source="status_effect",
     )
-    target_of_debuff.process_hp_change(hooks, hp_change, status_effect.owner)
+    target.process_hp_change(hooks, hp_change, status_effect.owner)
     return damage
 
 
@@ -111,8 +112,8 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A DICE ROLL VALUE
 
 
 def hp_change_dice_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target_of_debuff: Entity = status_effect.target
-    if target_of_debuff is None:
+    target = kwargs.get("target")
+    if target is None:
         return 0
     damage_dice_roll = Dice(status_effect.method_variables['time_thrown_dice'], status_effect.method_variables['sides_of_dice'])
     if status_effect.owner is not None:
@@ -125,7 +126,7 @@ def hp_change_dice_activate(hooks: HookContext, status_effect: StatusEffect, **k
         element_of_hp_change=status_effect.method_variables['element_of_hp_change'],
         source="status_effect",
     )
-    target_of_debuff.process_hp_change(hooks, hp_change, status_effect.owner)
+    target.process_hp_change(hooks, hp_change, status_effect.owner)
     return damage
 
 
@@ -137,13 +138,13 @@ SHIELD STATUS EFFECT
 
 
 def shield_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs): # TODO: Test if lowers damage
-    target_of_debuff: Entity = status_effect.target
-    if target_of_debuff is None:
+    target = kwargs.get("target")
+    if target is None:
         return 0
     if kwargs.get("hp_change") is not None:
         hp_change = kwargs.get("hp_change")
     else:
-        print(f"No hp change in kwargs for shield_activate. {status_effect.descriptor} for {target_of_debuff.descriptor} ID {target_of_debuff.id}")
+        print(f"No hp change in kwargs for shield_activate. {status_effect.descriptor} for {target.descriptor} ID {target.id}")
         return 0
     shield_doesnt_block_this_type = hp_change.type_of_hp_change not in status_effect.method_variables["absorb_type"]
     if_doesnt_blocks_every_type = status_effect.method_variables["absorb_type"] != "all"
@@ -171,16 +172,16 @@ STATUSES THAT CHANGE STATE OF TARGET
 
 
 def state_change_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target_of_debuff: Entity = status_effect.target
-    if target_of_debuff is not None:
-        target_of_debuff.change_state(status_effect.method_variables['state'], "+")
+    target = kwargs.get("target")
+    if target is not None:
+        target.change_state(status_effect.method_variables['state'], "+")
     return None
 
 
 def state_change_dispel(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target_of_debuff: Entity = status_effect.target
-    if status_effect.descriptor in target_of_debuff.status_effects and status_effect.static is False:
-        target_of_debuff.change_state(status_effect.method_variables['state'], "-")
+    target = kwargs.get("target")
+    if status_effect.descriptor in target.status_effects and status_effect.static is False:
+        target.change_state(status_effect.method_variables['state'], "-")
     return default_dispel_function(hooks, status_effect, **kwargs)
 
 
@@ -196,7 +197,7 @@ def extract_hooks(): # TODO: Will move this to DLCManager, which will read all h
     for name, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isfunction(obj) and name != "extract_hooks" and not (name.startswith("__")) and not (name.startswith("_")):
             if name not in return_value:
-                return_value["builtins::" + name] = obj
+                return_value["builtins:" + name] = obj
     return return_value
 
 
