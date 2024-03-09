@@ -5,6 +5,7 @@ import sys
 from engine.entity import Entity
 from engine.hook_context import HookContext
 from engine.status_effects.status_effect import StatusEffect
+from engine.utils.extract_hooks import extract_hooks
 from models.game_models import HpChange, Dice
 
 
@@ -53,7 +54,19 @@ STATUS EFFECTS THAT APPLY ANOTHER STATUS EFFECT
 def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
     status_effect_data = status_effect.method_variables['debuff']
     status_effect_to_apply = StatusEffect(status_effect_data['descriptor']).fromJson(status_effect_data)
-    return status_effect_to_apply.apply(hooks, status_effect.target, status_effect.owner, applied_by_effect=status_effect, **kwargs)
+    entity_had_status_effect = ( # its either this or I make delayed activation in trigger_status_effect
+        # if SE applies inner SE to target that already has it and update_type is the same, then it will not treat them as separate SEs
+        status_effect_to_apply.update_type == status_effect_to_apply.activation_type and
+        hooks.battlefield.get_entity_by_id(status_effect.target_id) is not None and # check if target is even valid
+        hooks.battlefield.get_entity_by_id(status_effect.target_id).status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor) is not None # and if it has the status effect
+    )
+    status_effect_to_apply.apply(hooks, applied_by=status_effect.owner, applied_by_effect=status_effect, **kwargs)
+    if entity_had_status_effect is not None:
+        applied_status = hooks.battlefield.get_entity_by_id(status_effect.target_id).status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor)
+        if applied_status is None:
+            return None
+        applied_status.duration += 1
+    return None
 
 
 """
@@ -192,15 +205,6 @@ DICTIONARY WITH EASY ACCESS TO FUNCTIONS
 """
 
 
-def extract_hooks(): # TODO: Will move this to DLCManager, which will read all hooks from files. For now, it's here.
-    return_value = {}
-    for name, obj in inspect.getmembers(sys.modules[__name__]):
-        if inspect.isfunction(obj) and name != "extract_hooks" and not (name.startswith("__")) and not (name.startswith("_")):
-            if name not in return_value:
-                return_value["builtins:" + name] = obj
-    return return_value
-
-
-HOOKS = extract_hooks()
+HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))
 
     

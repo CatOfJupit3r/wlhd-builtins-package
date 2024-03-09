@@ -1,5 +1,9 @@
+import inspect
+import sys
+
 from engine.entity import Entity
 from engine.hook_context import HookContext
+from engine.utils.extract_hooks import extract_hooks
 from models.game_models import HpChange
 
 
@@ -68,8 +72,4 @@ def spend_action_points(self: HookContext, target: Entity, value: int, **kwargs)
     return value
 
 
-HOOKS = {
-    "builtins::hp_change": hp_change,
-    "builtins::attribute_change": attribute_change,
-    "builtins::spent_action_points": spend_action_points
-}
+HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))
