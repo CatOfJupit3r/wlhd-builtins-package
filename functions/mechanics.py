@@ -1,4 +1,5 @@
 import inspect
+import random
 import sys
 import types
 from typing import List
@@ -7,6 +8,7 @@ from engine.entities.entity import Entity
 from engine.hook_context import HookContext
 from engine.spells.spell import Spell
 from engine.utils.extract_hooks import extract_hooks
+from engine.weapons.weapon import Weapon
 from models.exceptions import AbortError
 from models.game_models import HpChange
 
@@ -112,11 +114,50 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
     if user.get_state("builtins:can_attack") is False:
         raise AbortError("creature_cant_attack", user.get_name())
     self.add_cmd("builtins::attack_usage", [user.get_name()]) # will probably need a way to pass parameters to this
-    weapon = user.weaponry.active_weapon_id
-    usage_result = self.use_hook("ATTACK", weapon, user=user, **requires_parameters)
+    weapon_d: str = user.weaponry.active_weapon_id
+    user.weaponry.check_weapon(weapon_d, user)
+    weapon: Weapon = user.weaponry[weapon_d]
+    usage_result = self.use_hook("ATTACK", weapon.effect_hook, user=user, **requires_parameters)
     if usage_result is None:
         return 1
     return usage_result
+
+
+def use_defense(self: HookContext, user: Entity, **requires_parameters) -> int:
+    if user.get_state("builtins:can_defend") is False:
+        raise AbortError("creature_cant_defend", user.get_name())
+    self.add_cmd("builtins::defense_usage", [user.get_name()]) # will probably need a way to pass parameters to this
+    user.change_attribute(self, "current_armor", 10+user.get_attribute("builtins::armor_bonus"))
+    return 1
+
+
+def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **requires_parameters) -> int:
+    if user.get_state("builtins:can_change_weapon") is False:
+        raise AbortError("creature_cant_change_weapon", user.get_name())
+    self.add_cmd("builtins::change_weapon_usage", [user.get_name()]) # will probably need a way to pass parameters to this
+    if weapon_id not in user.weaponry:
+        raise ValueError(f"Weapon with id {weapon_id} not found.")
+    weapon = user.weaponry[weapon_id]
+    if weapon.cost_to_switch > user.get_attribute("current_action_points"):
+        raise ValueError(f"User {user.get_name()} does not have enough action points to switch to weapon {weapon_id}.")
+    user.weaponry.set_active_weapon(weapon_id)
+    return weapon.cost_to_switch
+
+
+def use_movement(self: HookContext, user: Entity, **requires_parameters) -> int:
+    if user.get_state("builtins:can_move") is False:
+        raise AbortError("creature_cant_move", user.get_name())
+    square = requires_parameters.get("square")
+    if square is None:
+        raise ValueError("No square provided")
+    if user.get_attribute("current_action_points") < user.cost_dictionary["builtins:move"]:
+        raise ValueError(f"User {user.get_name()} does not have enough action points to move.")
+    if self.battlefield.move_entity(user, square) is False:
+        raise ValueError(f"User {user.get_name()} cannot move to square {square}.")
+    self.add_cmd("builtins::movement_usage", [user.get_name()], [square])
+    return user.cost_dictionary["builtins:move"]
+
+
 
 
 HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))
