@@ -2,7 +2,7 @@ import copy
 import inspect
 import sys
 
-from engine.entity import Entity
+from engine.entities.entity import Entity
 from engine.hook_context import HookContext
 from engine.status_effects.status_effect import StatusEffect
 from engine.utils.extract_hooks import extract_hooks
@@ -14,7 +14,7 @@ def default_apply_function(hooks: HookContext, target: Entity, applied_by: Entit
         raise ValueError("No target!")
     status_effect.owner = copy.deepcopy(applied_by)
     status_effect.target_id = target.id
-    if status_effect not in target.status_effects:
+    if status_effect.descriptor not in target.status_effects:
         target.status_effects.add_effect(status_effect)
         if status_effect.activates_when_applied is True:
             return status_effect.activate(hooks)
@@ -34,6 +34,7 @@ def default_dispel_function(hooks: HookContext, status_effect: StatusEffect, **k
 
 
 def default_activate_function(hooks: HookContext, status_effect: StatusEffect, **kwargs) -> None:
+    print(f"Default activate function for {status_effect.descriptor} called")
     return None
 
 
@@ -54,12 +55,16 @@ STATUS EFFECTS THAT APPLY ANOTHER STATUS EFFECT
 def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
     status_effect_data = status_effect.method_variables['debuff']
     status_effect_to_apply = StatusEffect(status_effect_data['descriptor']).fromJson(status_effect_data)
-    entity_had_status_effect = ( # its either this or I make delayed activation in trigger_status_effect
-        # if SE applies inner SE to target that already has it and update_type is the same, then it will not treat them as separate SEs
+    entity_had_status_effect = (
         status_effect_to_apply.update_type == status_effect_to_apply.activation_type and
         hooks.battlefield.get_entity_by_id(status_effect.target_id) is not None and # check if target is even valid
         hooks.battlefield.get_entity_by_id(status_effect.target_id).status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor) is not None # and if it has the status effect
     )
+    # its either this or I make delayed activation in trigger_status_effect
+    # if SE applies inner SE to target that already has it and update_type is the same, then it will not treat them as separate SEs
+
+    # okay, maybe I should use delay eventually... This can cause unexpected behavior when some
+    # maybe I get delayed array in trigger_status_effect, add them here and then go over them in trigger (if there are any)
     status_effect_to_apply.apply(hooks, applied_by=status_effect.owner, applied_by_effect=status_effect, **kwargs)
     if entity_had_status_effect is not None:
         applied_status = hooks.battlefield.get_entity_by_id(status_effect.target_id).status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor)
@@ -104,7 +109,7 @@ def hp_change_by_value_activate(hooks: HookContext, status_effect: StatusEffect,
     if target is None:
         return 0
     if status_effect.owner is not None:
-        damage = status_effect.method_variables["value"] + status_effect.owner.get_bonus(status_effect["element_of_hp_change"] + '_attack')
+        damage = status_effect.method_variables["value"] + status_effect.owner.get_attribute(status_effect["element_of_hp_change"] + '_attack')
     else:
         damage = status_effect.method_variables["value"]
     hp_change = HpChange(
@@ -130,7 +135,7 @@ def hp_change_dice_activate(hooks: HookContext, status_effect: StatusEffect, **k
         return 0
     damage_dice_roll = Dice(status_effect.method_variables['time_thrown_dice'], status_effect.method_variables['sides_of_dice'])
     if status_effect.owner is not None:
-        damage = damage_dice_roll.roll(status_effect.owner.get_bonus(status_effect.method_variables['element_of_hp_change'] + '_attack'))
+        damage = damage_dice_roll.roll(status_effect.owner.get_attribute(status_effect.method_variables['element_of_hp_change'] + '_attack'))
     else:
         damage = damage_dice_roll.roll()
     hp_change = HpChange(

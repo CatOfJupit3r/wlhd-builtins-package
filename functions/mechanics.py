@@ -1,7 +1,9 @@
 import inspect
 import sys
+import types
+from typing import List
 
-from engine.entity import Entity
+from engine.entities.entity import Entity
 from engine.hook_context import HookContext
 from engine.spells.spell import Spell
 from engine.utils.extract_hooks import extract_hooks
@@ -23,9 +25,9 @@ def _heal(ctx: HookContext, target: Entity, value: HpChange, changed_by: Entity,
     # if value.value > 0:
     #     if target.has_effect('builtins:fainted'):
     #         target.status_effects['builtins:fainted'].dispel(ctx, target, True)
-    target.increment_bonus('current_health', value.value)
-    if target.get_bonus('current_health') > target.get_bonus('max_health'):
-        target.set_bonus('current_health', target.get_bonus('max_health'))
+    target.increment_attribute('current_health', value.value)
+    if target.get_attribute('current_health') > target.get_attribute('max_health'):
+        target.set_attribute('current_health', target.get_attribute('max_health'))
     ctx.add_cmd("builtins:creature_healed", [target.get_name()], value.value)
     return value.value
 
@@ -40,41 +42,41 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
     if value.value < 0:
         raise ValueError
     else:
-        if target.get_bonus("current_armor") > 0:
-            remaining_armor = target.get_bonus("current_armor") - value.value
+        if target.get_attribute("current_armor") > 0:
+            remaining_armor = target.get_attribute("current_armor") - value.value
             if remaining_armor <= 0:
                 value.value = abs(remaining_armor)
-                ctx.add_cmd("builtins:creature_takes_damage_shield_broken", [target.get_name()], target.get_bonus("current_armor"), value.value)
-                target.set_bonus('current_armor', 0)
+                ctx.add_cmd("builtins:creature_takes_damage_shield_broken", [target.get_name()], target.get_attribute("current_armor"), value.value)
+                target.set_attribute('current_armor', 0)
             else:
-                target.set_bonus('current_armor', remaining_armor)
+                target.set_attribute('current_armor', remaining_armor)
                 value.value = 0
-                ctx.add_cmd("builtins:creature_takes_damage_shield", [target.get_name()], target.get_bonus("current_armor"), value.value)
+                ctx.add_cmd("builtins:creature_takes_damage_shield", [target.get_name()], target.get_attribute("current_armor"), value.value)
         ctx.add_cmd("builtins:creature_takes_damage", [target.get_name()], value.value, [value.element_of_hp_change])
-        target.increment_bonus('current_health', -(value.value - target.get_bonus(value.element_of_hp_change + '_defense')))
-        if target.get_bonus("current_health") < 0:
-            target.set_bonus('current_health', 0)
+        target.increment_attribute('current_health', -(value.value - target.get_attribute(value.element_of_hp_change + '_defense')))
+        if target.get_attribute("current_health") < 0:
+            target.set_attribute('current_health', 0)
     return value.value
 
 
 def attribute_change(self: HookContext, target: Entity, name_of_attribute: str, value_to_increment: int, **kwargs) -> int:
-    target.increment_bonus(name_of_attribute, value_to_increment)
+    target.increment_attribute(name_of_attribute, value_to_increment)
     # "NAME changed ATTRIBUTE_NAME by VALUE_TO_INCREMENT."
     self.add_cmd("builtins:creature_attribute_changed", [target.get_name()], [name_of_attribute], value_to_increment)
     return value_to_increment
 
 
 def spend_action_points(self: HookContext, target: Entity, value: int, **kwargs) -> int:
-    target.increment_bonus('current_action_points', -value)
+    target.increment_attribute('current_action_points', -value)
     self.add_cmd("builtins:creature_spent_ap", [target.get_name()], value)
-    if target.get_bonus("current_action_points") < 0:
-        target.set_bonus("current_action_points", 0)
+    if target.get_attribute("current_action_points") < 0:
+        target.set_attribute("current_action_points", 0)
         # target.status_effects.apply_status_effect("builtins::tired", self, None, target)
         self.add_cmd("builtins:creature_tired", [target.get_name()])
     return value
 
 
-def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_parameters) -> None:
+def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_parameters) -> int:
     if caster.get_state("builtins:can_spell") is False:
         raise AbortError("creature_cant_spell", caster.get_name())
     caster.spell_book.check_spell(spell_id, caster)
@@ -90,12 +92,31 @@ def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_para
     return usage_result
 
 
-def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameters) -> None:
+def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameters) -> int:
     if user.get_state("builtins:can_item") is False:
         raise AbortError("creature_cant_item", user.get_name())
+    user.inventory.check_item(item_id, user)
     item = user.inventory[item_id]
-    item.use(self, user, **requires_parameters)
-    return None
+    item.current_consecutive_uses += 1
+    if item.max_consecutive_uses is not None and item.current_consecutive_uses >= item.max_consecutive_uses:
+        item.turns_until_usage = item.cooldown_value
+        item.current_consecutive_uses = 0
+    self.add_cmd("builtins::item_usage", [user.get_name()], [item.get_name()]) # will probably need a way to pass parameters to this
+    usage_result = self.use_hook("ITEM", item.effect_hook, user=user, **requires_parameters)
+    if usage_result is None:
+        return item.usage_cost
+    return usage_result
+
+
+def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
+    if user.get_state("builtins:can_attack") is False:
+        raise AbortError("creature_cant_attack", user.get_name())
+    self.add_cmd("builtins::attack_usage", [user.get_name()]) # will probably need a way to pass parameters to this
+    weapon = user.weaponry.active_weapon_id
+    usage_result = self.use_hook("ATTACK", weapon, user=user, **requires_parameters)
+    if usage_result is None:
+        return 1
+    return usage_result
 
 
 HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))
