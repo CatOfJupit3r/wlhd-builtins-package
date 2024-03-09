@@ -3,7 +3,9 @@ import sys
 
 from engine.entity import Entity
 from engine.hook_context import HookContext
+from engine.spells.spell import Spell
 from engine.utils.extract_hooks import extract_hooks
+from models.exceptions import AbortError
 from models.game_models import HpChange
 
 
@@ -70,6 +72,30 @@ def spend_action_points(self: HookContext, target: Entity, value: int, **kwargs)
         # target.status_effects.apply_status_effect("builtins::tired", self, None, target)
         self.add_cmd("builtins:creature_tired", [target.get_name()])
     return value
+
+
+def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_parameters) -> None:
+    if caster.get_state("builtins:can_spell") is False:
+        raise AbortError("creature_cant_spell", caster.get_name())
+    caster.spell_book.check_spell(spell_id, caster)
+    spell: Spell = caster.spell_book[spell_id]
+    spell.current_consecutive_uses += 1
+    if spell.max_consecutive_uses is not None and spell.current_consecutive_uses >= spell.max_consecutive_uses:
+        spell.turns_until_usage = spell.cooldown_value
+        spell.current_consecutive_uses = 0
+    self.add_cmd("builtins::spell_usage", [caster.get_name()], [spell.get_name()]) # will probably need a way to pass parameters to this
+    usage_result = self.use_hook("SPELL", spell.effect_hook, caster=caster, **requires_parameters)
+    if usage_result is None:
+        return spell.usage_cost
+    return usage_result
+
+
+def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameters) -> None:
+    if user.get_state("builtins:can_item") is False:
+        raise AbortError("creature_cant_item", user.get_name())
+    item = user.inventory[item_id]
+    item.use(self, user, **requires_parameters)
+    return None
 
 
 HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))
