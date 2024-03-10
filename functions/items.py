@@ -18,7 +18,7 @@ def get_weapon_target(ctx: HookContext, item: Item, square: Square) -> List[Enti
 
 
 def hp_change_item(self: HookContext, item: Item, item_user: Entity, **kwargs) -> None:
-    square: Square = kwargs.get("square")
+    square: Square = Square().from_str(kwargs.get("square"))
     targets = get_weapon_target(self, item, square)
     for target in targets:
         if item.method_variables['time_thrown_dice'] is not None:  # if it is a dice roll, then we roll it
@@ -46,7 +46,7 @@ def hp_change_item(self: HookContext, item: Item, item_user: Entity, **kwargs) -
 
 
 def applies_status_effect_item(self: HookContext, item: Item, item_user: Entity, **kwargs) -> None:
-    square: Square = kwargs.get("square")
+    square: Square = Square().from_str(kwargs.get("square"))
     targets = get_weapon_target(self, item, square)
     for target in targets:
         if item.method_variables.get('status_effect') is not None:
@@ -54,7 +54,7 @@ def applies_status_effect_item(self: HookContext, item: Item, item_user: Entity,
 
 
 def change_attribute_item(self: HookContext, item: Item, item_user: Entity, **kwargs) -> None:
-    square: Square = kwargs.get("square")
+    square: Square = Square().from_str(kwargs.get("square"))
     targets = get_weapon_target(self, item, square)
     for target in targets:
         if item.method_variables.get('attribute') is not None:
@@ -62,7 +62,7 @@ def change_attribute_item(self: HookContext, item: Item, item_user: Entity, **kw
 
 
 def add_item_item(self: HookContext, item: Item, item_user: Entity, **kwargs) -> None:
-    square: Square = kwargs.get("square")
+    square: Square = Square().from_str(kwargs.get("square"))
     targets = get_weapon_target(self, item, square)
     for target in targets:
         if item.method_variables.get('item') is not None:
