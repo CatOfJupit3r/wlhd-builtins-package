@@ -1,16 +1,14 @@
-import inspect
-import random
 import sys
-import types
-from typing import List
+import inspect
 
 from engine.entities.entity import Entity
 from engine.hook_context import HookContext
 from engine.spells.spell import Spell
+from engine.status_effects.status_effect import StatusEffect
 from engine.utils.extract_hooks import extract_hooks
 from engine.weapons.weapon import Weapon
 from models.exceptions import AbortError
-from models.game_models import HpChange
+from models.game_models import HpChange, Square
 
 
 def hp_change(self: HookContext, target: Entity, value: HpChange, changed_by: Entity, **kwargs) -> int:
@@ -22,11 +20,11 @@ def hp_change(self: HookContext, target: Entity, value: HpChange, changed_by: En
 
 
 def _heal(ctx: HookContext, target: Entity, value: HpChange, changed_by: Entity, **kwargs) -> int:
-    ctx.emit_event('on_healed', target=target, value=value, changed_by=changed_by, **kwargs)
-    ctx.emit_event('on_heal', target=target, value=value, changed_by=changed_by, **kwargs)
-    # if value.value > 0:
-    #     if target.has_effect('builtins:fainted'):
-    #         target.status_effects['builtins:fainted'].dispel(ctx, target, True)
+    ctx.emit_event('on_healed', changed_for=target, value=value, changed_by=changed_by, **kwargs)
+    ctx.emit_event('on_heal', changed_for=target, value=value, changed_by=changed_by, **kwargs)
+    if value.value > 0:
+        if target.has_effect('builtins:fainted'):
+            target.status_effects['builtins:fainted'].dispel(ctx)
     target.increment_attribute('current_health', value.value)
     if target.get_attribute('current_health') > target.get_attribute('max_health'):
         target.set_attribute('current_health', target.get_attribute('max_health'))
@@ -35,9 +33,9 @@ def _heal(ctx: HookContext, target: Entity, value: HpChange, changed_by: Entity,
 
 
 def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: Entity, **kwargs) -> int:
-    ctx.emit_event('on_damaged', target=target, value=value, changed_by=changed_by, **kwargs)
-    ctx.emit_event('on_deal_damage', target=target, value=value, changed_by=changed_by, **kwargs)
-    ctx.emit_event('shield', target=target, value=value, changed_by=changed_by, **kwargs)
+    ctx.emit_event('on_damaged', changed_for=target, value=value, changed_by=changed_by, **kwargs)
+    ctx.emit_event('on_deal_damage', changed_for=target, value=value, changed_by=changed_by, **kwargs)
+    ctx.emit_event('shield', changed_for=target, value=value, changed_by=changed_by, **kwargs)
     if target.get_state('builtins:damageable') is False or value.value == 0:
         ctx.add_cmd("builtins:creature_takes_no_damage", [target.get_name()])
         return 0
@@ -73,7 +71,7 @@ def spend_action_points(self: HookContext, target: Entity, value: int, **kwargs)
     self.add_cmd("builtins:creature_spent_ap", [target.get_name()], value)
     if target.get_attribute("current_action_points") < 0:
         target.set_attribute("current_action_points", 0)
-        # target.status_effects.apply_status_effect("builtins::tired", self, None, target)
+        # target.status_effects.apply_status_effect("builtins:tired", self, None, target)
         self.add_cmd("builtins:creature_tired", [target.get_name()])
     return value
 
@@ -87,7 +85,7 @@ def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_para
     if spell.max_consecutive_uses is not None and spell.current_consecutive_uses >= spell.max_consecutive_uses:
         spell.turns_until_usage = spell.cooldown_value
         spell.current_consecutive_uses = 0
-    self.add_cmd("builtins::spell_usage", [caster.get_name()], [spell.get_name()]) # will probably need a way to pass parameters to this
+    self.add_cmd("builtins:spell_usage", [caster.get_name()], [spell.get_name()]) # will probably need a way to pass parameters to this
     usage_result = self.use_hook("SPELL", spell.effect_hook, caster=caster, **requires_parameters)
     if usage_result is None:
         return spell.usage_cost
@@ -103,7 +101,7 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
     if item.max_consecutive_uses is not None and item.current_consecutive_uses >= item.max_consecutive_uses:
         item.turns_until_usage = item.cooldown_value
         item.current_consecutive_uses = 0
-    self.add_cmd("builtins::item_usage", [user.get_name()], [item.get_name()]) # will probably need a way to pass parameters to this
+    self.add_cmd("builtins:item_usage", [user.get_name()], [item.get_name()]) # will probably need a way to pass parameters to this
     usage_result = self.use_hook("ITEM", item.effect_hook, user=user, **requires_parameters)
     if usage_result is None:
         return item.usage_cost
@@ -113,7 +111,7 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
 def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
     if user.get_state("builtins:can_attack") is False:
         raise AbortError("creature_cant_attack", user.get_name())
-    self.add_cmd("builtins::attack_usage", [user.get_name()]) # will probably need a way to pass parameters to this
+    self.add_cmd("builtins:attack_usage", [user.get_name()]) # will probably need a way to pass parameters to this
     weapon_d: str = user.weaponry.active_weapon_id
     user.weaponry.check_weapon(weapon_d, user)
     weapon: Weapon = user.weaponry[weapon_d]
@@ -126,15 +124,15 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
 def use_defense(self: HookContext, user: Entity, **requires_parameters) -> int:
     if user.get_state("builtins:can_defend") is False:
         raise AbortError("creature_cant_defend", user.get_name())
-    self.add_cmd("builtins::defense_usage", [user.get_name()]) # will probably need a way to pass parameters to this
-    user.change_attribute(self, "current_armor", 10+user.get_attribute("builtins::armor_bonus"))
+    self.add_cmd("builtins:defense_usage", [user.get_name()]) # will probably need a way to pass parameters to this
+    user.change_attribute(self, "current_armor", 10+user.get_attribute("builtins:armor_bonus"))
     return 1
 
 
 def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **requires_parameters) -> int:
     if user.get_state("builtins:can_change_weapon") is False:
         raise AbortError("creature_cant_change_weapon", user.get_name())
-    self.add_cmd("builtins::change_weapon_usage", [user.get_name()]) # will probably need a way to pass parameters to this
+    self.add_cmd("builtins:change_weapon_usage", [user.get_name()]) # will probably need a way to pass parameters to this
     if weapon_id not in user.weaponry:
         raise ValueError(f"Weapon with id {weapon_id} not found.")
     weapon = user.weaponry[weapon_id]
@@ -144,20 +142,80 @@ def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **require
     return weapon.cost_to_switch
 
 
-def use_movement(self: HookContext, user: Entity, **requires_parameters) -> int:
+def use_movement(self: HookContext, user: Entity, uses_action_points: bool = False, **requires_parameters) -> int:
     if user.get_state("builtins:can_move") is False:
         raise AbortError("creature_cant_move", user.get_name())
     square = requires_parameters.get("square")
     if square is None:
         raise ValueError("No square provided")
-    if user.get_attribute("current_action_points") < user.cost_dictionary["builtins:move"]:
+    if square.line == user.square.line and square.column == user.square.column:
+        return user.cost_dictionary["builtins:move"] if uses_action_points else 0
+    if uses_action_points and (user.get_attribute("current_action_points") < user.cost_dictionary["builtins:move"]):
         raise ValueError(f"User {user.get_name()} does not have enough action points to move.")
-    if self.battlefield.move_entity(user, square) is False:
+    if self.battlefield.move_entity(user, square) == -1:
         raise ValueError(f"User {user.get_name()} cannot move to square {square}.")
-    self.add_cmd("builtins::movement_usage", [user.get_name()], [square])
-    return user.cost_dictionary["builtins:move"]
+    apply_status_effect(self, user, "builtins:moved", **requires_parameters)
+    self.add_cmd("builtins:movement_usage", [user.get_name()], [square])
+    return user.cost_dictionary["builtins:move"] if uses_action_points else 0
 
 
+def use_swap(self: HookContext, first: Square, second: Square) -> int:
+    if self.battlefield.swap_entities(first, second) == -1:
+        raise ValueError(f"Entities cannot be swapped.")
+    self.add_cmd("builtins:swap_usage", [first], [second])
+    apply_status_effect(
+        self,
+        self.battlefield[first.line, first.column],
+        "builtins:moved"
+    )
+    apply_status_effect(
+        self,
+        self.battlefield[second.line, second.column],
+        "builtins:moved"
+    )
+    return 1
+
+
+def add_spell(self: HookContext, user: Entity, spell_id: str, **kwargs):
+    spell_preset = self.import_data("SPELL", spell_id)
+    if spell_preset is None:
+        raise ValueError(f"Spell with id {spell_id} not found.")
+    spell = Spell().fromPreset(spell_preset)
+    if kwargs.get("silent") is not None:
+        self.add_cmd("builtins:add_spell_usage", [user.get_name()], [spell.get_name()])
+    user.spell_book.add_spell(spell)
+    return None
+
+
+def add_item(self: HookContext, user: Entity, item_id: str, **kwargs):
+    item_preset = self.import_data("ITEM", item_id)
+    if item_preset is None:
+        raise ValueError(f"Item with id {item_id} not found.")
+    item = Weapon().fromPreset(item_preset)
+    if kwargs.get("silent") is not None and kwargs.get("silent") is True:
+        self.add_cmd("builtins:add_item_usage", [user.get_name()], [item.get_name()])
+    user.inventory.add_item(item)
+    return None
+
+
+def add_weapon(self: HookContext, user: Entity, weapon_id: str, **kwargs):
+    weapon_preset = self.import_data("WEAPONS", weapon_id)
+    if weapon_preset is None:
+        raise ValueError(f"Weapon with id {weapon_id} not found.")
+    weapon = Weapon().fromPreset(weapon_preset)
+    if kwargs.get("silent") is not None:
+        self.add_cmd("builtins:add_weapon_usage", [user.get_name()], [weapon.get_name()])
+    user.weaponry.add_weapon(weapon)
+    return None
+
+
+def apply_status_effect(self: HookContext, applied_to: Entity, status_effect_descriptor: str, applied_by: Entity | None = None, **kwargs):
+    status_effect_preset = self.import_data("STATUS_EFFECT", status_effect_descriptor)
+    if status_effect_preset is None:
+        raise ValueError(f"Status effect with descriptor {status_effect_descriptor} not found.")
+    status_effect = StatusEffect().fromPreset(status_effect_preset)
+    status_effect.apply(self, applied_to, applied_by, **kwargs)
+    return None
 
 
 HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))

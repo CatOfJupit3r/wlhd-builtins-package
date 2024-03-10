@@ -9,20 +9,20 @@ from engine.utils.extract_hooks import extract_hooks
 from models.game_models import HpChange, Dice
 
 
-def default_apply_function(hooks: HookContext, target: Entity, applied_by: Entity, status_effect: StatusEffect, **kwargs) -> None:
-    if target is None:
+def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: Entity, status_effect: StatusEffect, **kwargs) -> None:
+    if applied_to is None:
         raise ValueError("No target!")
     status_effect.owner = copy.deepcopy(applied_by)
-    status_effect.target_id = target.id
-    if status_effect.descriptor not in target.status_effects:
-        target.status_effects.add_effect(status_effect)
+    status_effect.applied_to_id = applied_to.id
+    if status_effect.descriptor not in applied_to.status_effects:
+        applied_to.status_effects.add_effect(status_effect)
         if status_effect.activates_when_applied is True:
             return status_effect.activate(hooks)
         return None
     else:
         if status_effect.duration is not None:
-            if status_effect.duration > target.status_effects[status_effect.descriptor].duration:
-                target.status_effects[status_effect.descriptor].duration = status_effect.duration
+            if status_effect.duration > applied_to.status_effects[status_effect.descriptor].duration:
+                applied_to.status_effects[status_effect.descriptor].duration = status_effect.duration
         return None
         
 
@@ -56,9 +56,9 @@ def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect
     status_effect_data = status_effect.method_variables['debuff']
     status_effect_to_apply = StatusEffect(status_effect_data['descriptor']).fromJson(status_effect_data)
     entity_had_status_effect = (
-        status_effect_to_apply.update_type == status_effect_to_apply.activation_type and
-        hooks.battlefield.get_entity_by_id(status_effect.target_id) is not None and # check if target is even valid
-        hooks.battlefield.get_entity_by_id(status_effect.target_id).status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor) is not None # and if it has the status effect
+            status_effect_to_apply.update_type == status_effect_to_apply.activation_type and
+            hooks.battlefield.get_entity_by_id(status_effect.applied_to_id) is not None and  # check if target is even valid
+            hooks.battlefield.get_entity_by_id(status_effect.applied_to_id).status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor) is not None # and if it has the status effect
     )
     # its either this or I make delayed activation in trigger_status_effect
     # if SE applies inner SE to target that already has it and update_type is the same, then it will not treat them as separate SEs
@@ -67,7 +67,7 @@ def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect
     # maybe I get delayed array in trigger_status_effect, add them here and then go over them in trigger (if there are any)
     status_effect_to_apply.apply(hooks, applied_by=status_effect.owner, applied_by_effect=status_effect, **kwargs)
     if entity_had_status_effect is not None:
-        applied_status = hooks.battlefield.get_entity_by_id(status_effect.target_id).status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor)
+        applied_status = hooks.battlefield.get_entity_by_id(status_effect.applied_to_id).status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor)
         if applied_status is None:
             return None
         applied_status.duration += 1
@@ -132,7 +132,7 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A DICE ROLL VALUE
 def hp_change_dice_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
     target = kwargs.get("target")
     if target is None:
-        return 0
+        return None
     damage_dice_roll = Dice(status_effect.method_variables['time_thrown_dice'], status_effect.method_variables['sides_of_dice'])
     if status_effect.owner is not None:
         damage = damage_dice_roll.roll(status_effect.owner.get_attribute(status_effect.method_variables['element_of_hp_change'] + '_attack'))
@@ -191,9 +191,9 @@ STATUSES THAT CHANGE STATE OF TARGET
 
 def state_change_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
     target = kwargs.get("target")
-    if target is not None:
-        target.change_state(status_effect.method_variables['state'], "+")
-    return None
+    if target is None:
+        return None
+    target.change_state(status_effect.method_variables['state'], "+")
 
 
 def state_change_dispel(hooks: HookContext, status_effect: StatusEffect, **kwargs):
