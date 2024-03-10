@@ -233,10 +233,10 @@ def add_item(self: HookContext, user: Entity, item_id: str, **kwargs):
     return None
 
 
-def add_weapon(self: HookContext, user: Entity, weapon_id: str, **kwargs):
-    weapon_preset = self.import_data("WEAPONS", weapon_id)
+def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, **kwargs):
+    weapon_preset = self.import_data("WEAPON", weapon_descriptor)
     if weapon_preset is None:
-        raise ValueError(f"Weapon with id {weapon_id} not found.")
+        raise ValueError(f"Weapon with id {weapon_descriptor} not found.")
     weapon = Weapon().fromPreset(weapon_preset)
     if kwargs.get("silent") is not None:
         self.add_cmd("builtins:add_weapon_usage", [user.get_name()], [weapon.get_name()])
@@ -282,6 +282,140 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
         return False
 
     return True
+
+
+"""
+def summon_creature(field: Battlefield, summoner: Entity, creature_descriptor, preferred_line=None, preferred_column=None,
+                    is_temporary: None | int = False, controlled_by_ai=True, turn_in_queue=0):
+    # Function, which is used for summoning creatures.
+    #     :param field: Battlefield, which contains all creatures on the field
+    # :param summoner: creature, who summons the creature
+    # :param creature_descriptor: id of creature in json
+    # :param preferred_line: If None, then creature will be summoned on random square. If integer, then creature will be summoned on given square
+    # :param preferred_column: If None, then creature will be summoned on random square. If integer, then creature will be summoned on given square
+    # :param is_temporary: If None, then creature is permanent. If integer, then creature is temporary and will be deleted after given amount of turns
+    # :param controlled_by_ai: If True, then creature will be controlled by AI. If False, then creature will be controlled by player
+    # :param turn_in_queue: preferred turn in queue.
+    # "last"  - creature will act last in queue
+    # "first" - creature will act first in queue
+    # "random" - creature will act randomly in queue
+    # "after_summoner" - creature will act after summoner
+    # :return: None
+    creature = Entity(creature_descriptor).fromJson(
+        installed.DLC_navigator.DLC_NAVIGATOR.get_data("entities", creature_descriptor))
+    _set_creature_control(creature, controlled_by_ai, summoner)
+    if creature.get_state("builtins::playable") is True:
+        _determine_creature_position(field, creature, creature_descriptor, preferred_line, preferred_column)
+    else:
+        creature.line = preferred_line
+        creature.column = preferred_column
+    _set_creature_initiative(field, creature, summoner, turn_in_queue)
+    try:
+        field.add_entity(creature)
+    except exceptions.FieldError:  # this error is raised when creature is summoned on occupied square
+        traceback.print_exc()
+        settings.logger_errors.error(f"Creature with id {creature_descriptor} cannot be summoned on line {creature.line} and column {creature.column} because there is already a creature on this square")
+        # find unoccupied square and summon creature there instead
+        _set_creature_on_any_square(field, creature, summoner, is_temporary)
+        try:
+            field.add_entity(creature)
+        except exceptions.FieldError:  # this error is raised once again, then we give up ._.
+            traceback.print_exc()
+            settings.logger_errors.error(f"Creature with id {creature_descriptor} cannot be summoned on any square because there are no free squares on the field")
+            return None
+    _apply_summoned_status_effect(field, creature, summoner, is_temporary)
+    return None
+
+
+def _find_unoccupied_squares_on_line(field, line):
+    result = [i for i in range(1, 7)]
+    for column in range(1, 7):
+        if field[line, column][0] is not None:
+            result.remove(column)
+    return result
+
+
+def _find_unoccupied_squares_on_column(field, column):
+    result = [i for i in range(1, 7)]
+    for line in range(1, 7):
+        if field[line, column][0] is not None:
+            result.remove(line)
+    return result
+
+
+def _apply_summoned_status_effect(field, creature, summoner, is_temporary):
+    if is_temporary is None:
+        creature.status_effects.apply_status_effect(field, "Summoned", summoner)
+    else:
+        creature.status_effects.apply_status_effect(field, "SummonedWithDeletion", summoner)
+        creature.status_effects["SummonedWithDeletion"].duration = is_temporary
+
+
+def _set_creature_control(creature, controlled_by_ai, summoner):
+    if controlled_by_ai is True:
+        creature.control_info['player_id'] = summoner.control_info
+    else:
+        creature.control_info['player_id'] = -1
+
+
+def _determine_creature_position(field: Battlefield, creature, id_of_creature_in_json, preferred_line, preferred_column):
+    if preferred_line is not None and preferred_column is not None:
+        if field[preferred_line, preferred_column][0] is not None:
+            raise ValueError(f"Creature with id {id_of_creature_in_json} cannot be summoned on line {preferred_line} and column {preferred_column} because there is already a creature on this square")
+        creature.line = preferred_line
+        creature.column = preferred_column
+    else:
+        if preferred_column is None and preferred_line is not None:
+            un_occupied_column = _find_unoccupied_squares_on_line(field, preferred_line)
+            if len(un_occupied_column) == 0:
+                raise ValueError(f"Creature with id {id_of_creature_in_json} cannot be summoned on line {preferred_line} because there are no free squares on this line")
+            creature.line = preferred_line
+            creature.column = random.choice(un_occupied_column)
+        elif preferred_column is not None and preferred_line is None:
+            un_occupied_line = _find_unoccupied_squares_on_column(field, preferred_column)
+            if len(un_occupied_line) == 0:
+                raise ValueError(f"Creature with id {id_of_creature_in_json} cannot be summoned on column {preferred_column} because there are no free squares on this column")
+            creature.column = preferred_column
+            creature.line = random.choice(un_occupied_line)
+        else:
+            un_occupied_squares = [(i, j) for i in range(1, 7) for j in range(1, 7)]
+            for line in range(1, 7):
+                for column in range(1, 7):
+                    if field[line, column][0] is not None:
+                        un_occupied_squares.remove((line, column))
+            if len(un_occupied_squares) == 0:
+                raise ValueError(f"Creature with id {id_of_creature_in_json} cannot be summoned because there are no free squares on the field")
+            creature.line, creature.column = random.choice(un_occupied_squares)
+
+
+def _set_creature_on_any_square(field: Battlefield, creature, summoner, preferred_line):
+    if preferred_line is None:
+        preferred_line = random.choice([i for i in range(1, 7)])
+    # preferred line refers more on the side where creature is summoned. If creature meant to be summoned on 1-3 lines, then it will be summoned on 1-3 lines. If creature meant to be summoned on 4-6 lines, then it will be summoned on 4-6 lines
+    if preferred_line in range(1, 4):
+        range_of_lines = range(1, 4)
+    else:
+        range_of_lines = range(4, 7)
+    for line in range_of_lines:
+        un_occupied_column = _find_unoccupied_squares_on_line(field, line)
+        if len(un_occupied_column) != 0:
+            creature.line = line
+            creature.column = random.choice(un_occupied_column)
+            return None
+
+
+def _set_creature_initiative(field, creature, summoner, turn_in_queue):
+    match turn_in_queue:
+        case "after_summoner":
+            creature.initiative = field[summoner.line, summoner.column] + 0.5
+        case "last":
+            creature.initiative = -1
+        case "first":
+            creature.initiative = 999
+        case "random":
+            creature.initiative = random.randint(0, 20)
+
+"""
 
 
 HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))
