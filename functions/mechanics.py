@@ -40,22 +40,22 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
         ctx.add_cmd("builtins:creature_takes_no_damage", [target.get_name()])
         return 0
     if value.value < 0:
-        raise ValueError
-    else:
-        if target.get_attribute("current_armor") > 0:
-            remaining_armor = target.get_attribute("current_armor") - value.value
-            if remaining_armor <= 0:
-                value.value = abs(remaining_armor)
-                ctx.add_cmd("builtins:creature_takes_damage_shield_broken", [target.get_name()], target.get_attribute("current_armor"), value.value)
-                target.set_attribute('current_armor', 0)
-            else:
-                target.set_attribute('current_armor', remaining_armor)
-                value.value = 0
-                ctx.add_cmd("builtins:creature_takes_damage_shield", [target.get_name()], target.get_attribute("current_armor"), value.value)
-        ctx.add_cmd("builtins:creature_takes_damage", [target.get_name()], value.value, [value.element_of_hp_change])
-        target.increment_attribute('current_health', -(value.value - target.get_attribute(value.element_of_hp_change + '_defense')))
-        if target.get_attribute("current_health") < 0:
-            target.set_attribute('current_health', 0)
+        value.value = 0
+    if target.get_attribute("current_armor") > 0:
+        remaining_armor = target.get_attribute("current_armor") - value.value
+        if remaining_armor <= 0:
+            value.value = abs(remaining_armor)
+            ctx.add_cmd("builtins:creature_takes_damage_shield_broken", [target.get_name()], target.get_attribute("current_armor"), value.value)
+            target.set_attribute('current_armor', 0)
+        else:
+            target.set_attribute('current_armor', remaining_armor)
+            value.value = 0
+            ctx.add_cmd("builtins:creature_takes_damage_shield", [target.get_name()], target.get_attribute("current_armor"), value.value)
+    fainted_dead_mechanic(ctx, target, changed_by, **kwargs)
+    ctx.add_cmd("builtins:creature_takes_damage", [target.get_name()], value.value, [value.element_of_hp_change])
+    target.increment_attribute('current_health', -(value.value - target.get_attribute(value.element_of_hp_change + '_defense')))
+    if target.get_attribute("current_health") < 0:
+        target.set_attribute('current_health', 0)
     return value.value
 
 
@@ -87,6 +87,13 @@ def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_para
         spell.current_consecutive_uses = 0
     self.add_cmd("builtins:spell_usage", [caster.get_name()], [spell.get_name()]) # will probably need a way to pass parameters to this
     usage_result = self.use_hook("SPELL", spell.effect_hook, caster=caster, **requires_parameters)
+    self.trigger_status_effects(
+        self,
+        "on_spell_cast",
+        spell=spell,
+        caster=caster,
+        parameters=requires_parameters
+    )
     if usage_result is None:
         return spell.usage_cost
     return usage_result
@@ -103,6 +110,13 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
         item.current_consecutive_uses = 0
     self.add_cmd("builtins:item_usage", [user.get_name()], [item.get_name()]) # will probably need a way to pass parameters to this
     usage_result = self.use_hook("ITEM", item.effect_hook, user=user, **requires_parameters)
+    self.trigger_status_effects(
+        self,
+        "on_item_use",
+        item=item,
+        used_by=user,
+        parameters=requires_parameters
+    )
     if usage_result is None:
         return item.usage_cost
     return usage_result
@@ -116,6 +130,13 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
     user.weaponry.check_weapon(weapon_d, user)
     weapon: Weapon = user.weaponry[weapon_d]
     usage_result = self.use_hook("ATTACK", weapon.effect_hook, user=user, **requires_parameters)
+    self.trigger_status_effects(
+        self,
+        "on_attack",
+        weapon=weapon,
+        attacker=user,
+        parameters=requires_parameters
+    )
     if usage_result is None:
         return 1
     return usage_result
@@ -138,6 +159,14 @@ def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **require
     weapon = user.weaponry[weapon_id]
     if weapon.cost_to_switch > user.get_attribute("current_action_points"):
         raise ValueError(f"User {user.get_name()} does not have enough action points to switch to weapon {weapon_id}.")
+    self.trigger_status_effects(
+        self,
+        "on_weapon_switch",
+        changed_for=user,
+        weapon=weapon,
+        previous_weapon=user.weaponry.active_weapon_id,
+        parameters=requires_parameters
+    )
     user.weaponry.set_active_weapon(weapon_id)
     return weapon.cost_to_switch
 
@@ -155,6 +184,12 @@ def use_movement(self: HookContext, user: Entity, uses_action_points: bool = Fal
     if self.battlefield.move_entity(user, square) == -1:
         raise ValueError(f"User {user.get_name()} cannot move to square {square}.")
     apply_status_effect(self, user, "builtins:moved", **requires_parameters)
+    self.trigger_status_effects(
+        self,
+        "on_move",
+        square=square,
+        moved_entity=user
+    )
     self.add_cmd("builtins:movement_usage", [user.get_name()], [square])
     return user.cost_dictionary["builtins:move"] if uses_action_points else 0
 
@@ -216,6 +251,37 @@ def apply_status_effect(self: HookContext, applied_to: Entity, status_effect_des
     status_effect = StatusEffect().fromPreset(status_effect_preset)
     status_effect.apply(self, applied_to, applied_by, **kwargs)
     return None
+
+
+def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity = None, **kwargs):
+    is_fainted = target.has_effect("builtins:fainted") is not None
+    is_alive = target.get_state("builtins:alive") is True
+    health_is_zero = target.get_attribute("current_health") <= 0
+
+    if is_fainted is False and is_alive and health_is_zero:
+        apply_status_effect(self, target, "builtins:fainted", damaged_by)
+        self.trigger_status_effects(
+            self,
+            "on_fainted",
+            fainted=target,
+            fainted_by=damaged_by
+        )
+        self.add_cmd("builtins:creature_fainted", [target.get_name()])
+        return True
+
+    elif is_fainted and is_alive and health_is_zero:
+        apply_status_effect(self, target, "builtins:marked_for_deletion", damaged_by)
+        self.trigger_status_effects(
+            self,
+            "on_death",
+            killed=target,
+            killed_by=damaged_by
+        )
+        self.add_cmd("builtins:creature_died", [target.get_name()])
+        target.change_state("builtins:alive", '-')
+        return False
+
+    return True
 
 
 HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))
