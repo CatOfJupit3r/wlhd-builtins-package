@@ -1,2 +1,82 @@
 {
+    "sword": {
+        "descriptor": "builtins:sword",
+        "usage_cost": 1,
+        "cooldown": 0,
+        "is_consumable": false,
+        "quantity": 1,
+        "caster_must_be_in_range": [
+            3,
+            4
+        ],
+        "max_consecutive_uses": null,
+        "method_variables": {
+            "time_thrown_dice": 1,
+            "sides_of_dice": 6,
+            "type_of_hp_change": "damage",
+            "element_of_hp_change": "builtins:physical"
+        },
+        "applies": [],
+        "effect_hook": "builtins::hp_change_weapon",
+        "requires": {
+            "requires": {
+                "square": "Square"
+            },
+            "restrictions": {
+                "square": {
+                    "only_side": null,
+                    "only_lines": [
+                        3,
+                        4
+                    ],
+                    "only_columns": null,
+                    "everything_except": null,
+                    "only_descriptor": null,
+                    "only_empty": null,
+                    "exclude_inner_requires": null
+                }
+            }
+        },
+        "cost_to_switch": 1
+    },
+    "hero_sword": {
+        "descriptor": "builtins:hero_sword",
+        "usage_cost": 1,
+        "cooldown": 0,
+        "is_consumable": false,
+        "quantity": 1,
+        "caster_must_be_in_range": [
+            3,
+            4
+        ],
+        "max_consecutive_uses": null,
+        "method_variables": {
+            "time_thrown_dice": 3,
+            "sides_of_dice": 8,
+            "type_of_hp_change": "damage",
+            "element_of_hp_change": "builtins:fire"
+        },
+        "applies": [],
+        "effect_hook": "builtins::hp_change_weapon",
+        "requires": {
+            "requires": {
+                "square": "Square"
+            },
+            "restrictions": {
+                "square": {
+                    "only_side": null,
+                    "only_lines": [
+                        3,
+                        4
+                    ],
+                    "only_columns": null,
+                    "everything_except": null,
+                    "only_descriptor": null,
+                    "only_empty": null,
+                    "exclude_inner_requires": null
+                }
+            }
+        },
+        "cost_to_switch": 1
+    }
 }
