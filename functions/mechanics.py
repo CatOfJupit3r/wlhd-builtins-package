@@ -271,7 +271,6 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
         return True
 
     elif is_fainted and is_alive and health_is_zero:
-        apply_status_effect(self, target, "builtins:marked_for_deletion", damaged_by)
         self.trigger_status_effects(
             self,
             "on_death",
@@ -279,7 +278,11 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
             killed_by=damaged_by
         )
         self.add_cmd("builtins:creature_died", [target.get_name()])
-        target.change_state("builtins:alive", '-')
+        # dead entities are removed on turn beginning
+        target.change_state("builtins:alive", "-")
+        target.change_state("builtins:alive", "-")
+        target.change_state("builtins:alive", "-")
+        target.change_state("builtins:alive", "-")
         return False
 
     return True
