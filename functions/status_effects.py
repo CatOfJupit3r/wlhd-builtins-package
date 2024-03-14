@@ -205,6 +205,30 @@ def state_change_dispel(hooks: HookContext, status_effect: StatusEffect, **kwarg
 
 """
 
+SUMMON-RELATED STATUS EFFECTS
+
+"""
+
+
+def summoned_with_deletion_apply(hooks: HookContext, applied_to: Entity, applied_by: Entity, status_effect: StatusEffect, **kwargs):
+    debuff_duration = kwargs.get("debuff_duration", status_effect.method_variables["turns_until_deletion"])
+    status_effect.duration = debuff_duration
+    return default_apply_function(
+        hooks, applied_to, applied_by, status_effect, **kwargs
+    )
+
+
+def summoned_with_deletion_dispel(hooks: HookContext, status_effect: StatusEffect, **kwargs):
+    target = kwargs.get("target")
+    if target is None:
+        return None
+    for _ in range(10):
+        target.change_state("builtins:alive", "-")
+    return default_dispel_function(hooks, status_effect, **kwargs)
+
+
+"""
+
 DICTIONARY WITH EASY ACCESS TO FUNCTIONS
 
 """
