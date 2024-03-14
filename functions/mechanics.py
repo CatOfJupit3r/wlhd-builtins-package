@@ -9,7 +9,7 @@ from engine.status_effects.status_effect import StatusEffect
 from engine.utils.extract_hooks import extract_hooks
 from engine.weapons.weapon import Weapon
 from models.exceptions import AbortError
-from models.game_models import HpChange, Square
+from models.game_models import HpChange, Square, Dice
 
 
 def hp_change(self: HookContext, target: Entity, value: HpChange, changed_by: Entity, **kwargs) -> int:
@@ -342,6 +342,32 @@ def summon_entity(
                 entity_ptr.initiative = None # arrange_queue will roll initiative if None
     self.arrange_queue.emit(initiative_reroll=False)
     return None
+
+
+def make_fortitude_roll(
+        self: HookContext,
+        target: Entity,
+        fortitude_roll_type_name: str = 'strength',
+        fortitude_roll_success_number: int = 0
+) -> tuple[bool, int]:
+    safe_roll_result = Dice(1, 20).roll(
+        target.get_attribute(fortitude_roll_type_name)
+    )
+    safe_roll_result_greater_than_barrier = safe_roll_result > fortitude_roll_success_number
+    safe_roll_result_equal_to_20 = safe_roll_result - target.get_attribute(fortitude_roll_type_name) == 20
+    safe_roll_is_total_failure = safe_roll_result - target.get_attribute(fortitude_roll_type_name) == 1
+    self.trigger_status_effects(
+        self,
+        "on_fortitude_roll",
+        result_of_safe_roll=safe_roll_result,
+        type_of_safe_roll=fortitude_roll_type_name
+    )
+    if safe_roll_result_equal_to_20 or (safe_roll_result_greater_than_barrier and not safe_roll_is_total_failure):
+        self.add_cmd("builtins:successful_fortitude_roll", [fortitude_roll_type_name])
+        return True, safe_roll_result
+    else:
+        self.add_cmd("builtins:failed_fortitude_roll", [fortitude_roll_type_name])
+        return False, safe_roll_result
 
 
 HOOKS = extract_hooks(inspect.getmembers(sys.modules[__name__]))
