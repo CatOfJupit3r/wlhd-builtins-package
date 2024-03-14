@@ -1,4 +1,18 @@
 {
+    "weapon_error": {
+        "descriptor": "builtins:weapon_error",
+        "usage_cost": 1,
+        "cooldown": 999,
+        "is_consumable": false,
+        "quantity": 1,
+        "caster_must_be_in_range": [1, 2, 3, 4, 5, 6],
+        "max_consecutive_uses": null,
+        "method_variables": {},
+        "applies": [],
+        "effect_hook": "builtins:hp_change_weapon",
+        "requires": null,
+        "cost_to_switch": 1
+    },
     "sword": {
         "descriptor": "builtins:sword",
         "usage_cost": 1,

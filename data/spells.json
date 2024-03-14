@@ -1,2 +1,26 @@
 {
+    "spell_error": {
+        "cost": 1,
+        "caster_must_be_in_range": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
+        "cooldown": 1,
+        "max_consecutive_uses": 1,
+        "consecutive_uses_reset_on_cooldown_update": true,
+        "requires": {"requires": {"square": "Square"},
+            "restrictions": {"square": {"only_side": null,
+                "only_lines": null,
+                "only_columns": null,
+                "everything_except": null,
+                "only_descriptor": null,
+                "only_empty": null,
+                "exclude_inner_requires": null}}},
+        "effect_hook": "builtins:spell_error_effect",
+        "school": "error"
+    }
 }
