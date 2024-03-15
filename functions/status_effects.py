@@ -6,7 +6,7 @@ from engine.entities.entity import Entity
 from engine.hook_context import HookContext
 from engine.status_effects.status_effect import StatusEffect
 from engine.utils.extract_hooks import extract_hooks
-from models.game_models import HpChange, Dice
+from models.game import HpChange, Dice
 
 
 def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: Entity, status_effect: StatusEffect, **kwargs) -> None:

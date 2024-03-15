@@ -4,7 +4,7 @@ from engine.entities.entity import Entity
 from engine.hook_context import HookContext
 from engine.weapons.weapon import Weapon
 from models.exceptions import AbortError
-from models.game_models import Square, Dice, HpChange
+from models.game import Square, Dice, HpChange
 
 
 def get_weapon_target(ctx: HookContext, item: Weapon, square: Square) -> List[Entity]:
