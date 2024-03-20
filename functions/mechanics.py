@@ -224,8 +224,8 @@ def use_movement(self: HookContext, user: Entity, uses_action_points: bool = Fal
             "creature_cant_move",
             entity_name=user.get_name()
         )
-    square = requires_parameters.get("square")
-    if square is None:
+    square = Square().from_str(requires_parameters.get("square", "0/0"))
+    if square is None or square.line == 0 or square.column == 0:
         raise AbortError("No square provided")
     if square.line == user.square.line and square.column == user.square.column:
         return user.cost_dictionary["builtins:move"] if uses_action_points else 0
