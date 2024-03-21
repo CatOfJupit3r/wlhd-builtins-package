@@ -134,7 +134,7 @@ def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_para
         spell_name=spell.get_name()
     ) # will look into passing parameters to this.
     usage_result = self.use_hook("SPELL", spell.effect_hook, caster=caster, **requires_parameters)
-    self.trigger_status_effects("on_spell_cast", spell=spell, caster=caster, parameters=requires_parameters)
+    self.trigger_on_spell_cast(spell_=spell, caster=caster, **requires_parameters)
     if usage_result is None:
         return spell.usage_cost
     return usage_result
@@ -158,7 +158,7 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
         item_name=item.get_name()
     )
     usage_result = self.use_hook("ITEM", item.effect_hook, user=user, **requires_parameters)
-    self.trigger_status_effects("on_item_use", item=item, used_by=user, parameters=requires_parameters)
+    self.trigger_on_item_use(item_=item, used_by=user, **requires_parameters)
     if usage_result is None:
         return item.usage_cost
     return usage_result
@@ -183,7 +183,7 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
         weapon_user=user,
         **requires_parameters,
     )
-    self.trigger_status_effects("on_attack", weapon=weapon, attacker=user, parameters=requires_parameters)
+    self.trigger_on_attack(weapon_=weapon, attacker=user, **requires_parameters)
     if usage_result is None:
         return 1
     return usage_result
@@ -203,7 +203,7 @@ def use_defense(self: HookContext, user: Entity, **requires_parameters) -> int:
     return 1
 
 
-def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **requires_parameters) -> int:
+def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **_) -> int:
     if user.get_state("builtins:can_change_weapon") is False:
         raise AbortError(
             "creature_cant_change_weapon",
@@ -218,8 +218,8 @@ def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **require
     weapon = user.weaponry[weapon_id]
     if weapon.cost_to_switch > user.get_attribute("current_action_points"):
         raise ValueError(f"User {user.get_name()} does not have enough action points to switch to weapon {weapon_id}.")
-    self.trigger_status_effects("on_weapon_switch", changed_for=user, weapon=weapon,
-                                previous_weapon=user.weaponry.active_weapon_id, parameters=requires_parameters)
+    self.trigger_on_change_weapon(changed_for=user, weapon_=weapon,
+                                  previous_weapon=user.weaponry.active_weapon_id)
     user.weaponry.set_active_weapon(weapon_id)
     return weapon.cost_to_switch
 
@@ -240,7 +240,7 @@ def use_movement(self: HookContext, user: Entity, uses_action_points: bool = Fal
     if self.battlefield.move_entity(user, square) == -1:
         raise AbortError(f"User {user.get_name()} cannot move to square {square}.")
     apply_status_effect(self, user, "builtins:moved", **requires_parameters)
-    self.trigger_status_effects("on_move", square=square, moved_entity=user)
+    self.trigger_on_move(square=square, moved_entity=user, moved_by=user)
     self.add_cmd(
         "builtins:movement_usage",
         entity_name=user.get_name(),
@@ -331,7 +331,7 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
 
     if is_fainted is False and is_alive and health_is_zero:
         apply_status_effect(self, target, "builtins:fainted", damaged_by)
-        self.trigger_status_effects("on_fainted", fainted=target, fainted_by=damaged_by)
+        self.trigger_on_fainted(fainted=target, fainted_by=damaged_by)
         self.add_cmd(
             "builtins:creature_fainted",
             entity_name=target.get_name()
@@ -339,7 +339,7 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
         return True
 
     elif is_fainted and is_alive and health_is_zero:
-        self.trigger_status_effects("on_death", killed=target, killed_by=damaged_by)
+        self.trigger_on_death(died=target, killed_by=damaged_by)
         self.add_cmd(
             "builtins:creature_died",
             entity_name=target.get_name()
@@ -422,8 +422,10 @@ def make_fortitude_roll(
     safe_roll_result_greater_than_barrier = safe_roll_result > fortitude_roll_success_number
     safe_roll_result_equal_to_20 = safe_roll_result - target.get_attribute(fortitude_roll_type_name) == 20
     safe_roll_is_total_failure = safe_roll_result - target.get_attribute(fortitude_roll_type_name) == 1
-    self.trigger_status_effects("on_fortitude_roll", result_of_safe_roll=safe_roll_result,
-                                type_of_safe_roll=fortitude_roll_type_name)
+    self.trigger_on_fortitude_roll(result_of_safe_roll=safe_roll_result,
+                                   type_of_safe_roll=fortitude_roll_type_name,
+                                   entity_that_rolls=target
+                                   )
     if safe_roll_result_equal_to_20 or (safe_roll_result_greater_than_barrier and not safe_roll_is_total_failure):
         self.add_cmd(
             "builtins:successful_fortitude_roll",
