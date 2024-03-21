@@ -31,7 +31,7 @@
             "element_of_hp_change": "builtins:physical"
         },
         "applies": [],
-        "effect_hook": "builtins::hp_change_weapon",
+        "effect_hook": "builtins:hp_change_weapon",
         "requires": {
             "requires": {
                 "square": "Square"
@@ -71,7 +71,7 @@
             "element_of_hp_change": "builtins:fire"
         },
         "applies": [],
-        "effect_hook": "builtins::hp_change_weapon",
+        "effect_hook": "builtins:hp_change_weapon",
         "requires": {
             "requires": {
                 "square": "Square"

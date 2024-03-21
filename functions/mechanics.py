@@ -176,7 +176,13 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
     weapon_d: str = user.weaponry.active_weapon_id
     user.weaponry.check_weapon(weapon_d, user)
     weapon: Weapon = user.weaponry[weapon_d]
-    usage_result = self.use_hook("ATTACK", weapon.effect_hook, user=user, **requires_parameters)
+    usage_result = self.use_hook(
+        "WEAPON",
+        weapon.effect_hook,
+        weapon=weapon,
+        weapon_user=user,
+        **requires_parameters,
+    )
     self.trigger_status_effects("on_attack", weapon=weapon, attacker=user, parameters=requires_parameters)
     if usage_result is None:
         return 1
