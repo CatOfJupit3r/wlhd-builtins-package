@@ -41,18 +41,12 @@
         "descriptor": "builtins:target_dummy",
         "race_of_creature": "mechanoid",
         "attributes": {
-            "builtins:health": {
-                "current": 50,
-                "max": 100
-            },
-            "builtins:action_points": {
-                "current": 0,
-                "max": 2
-            },
-            "builtins:armor": {
-                "current": 0,
-                "base": 20
-            }
+            "builtins:current_health": 50,
+            "builtins:max_health": 100,
+            "builtins:current_action_points": 0,
+            "builtins:max_action_points": 2,
+            "builtins:current_armor": 0,
+            "builtins:base_armor": 20
         },
         "spell_book": {},
         "status_effects": [],
@@ -79,18 +73,12 @@
         "descriptor": "builtins:target_dummy_large",
         "race_of_creature": "mechanoid",
         "attributes": {
-            "builtins:health": {
-                "current": 100,
-                "max": 250
-            },
-            "builtins:action_points": {
-                "current": 3,
-                "max": 3
-            },
-            "builtins:armor": {
-                "current": 10,
-                "base": 50
-            }
+            "builtins:current_health": 100,
+            "builtins:max_health": 250,
+            "builtins:current_action_points": 3,
+            "builtins:max_action_points": 3,
+            "builtins:current_armor": 10,
+            "builtins:base_armor": 50
         },
         "spell_book": {},
         "status_effects": [],
@@ -119,18 +107,12 @@
         "descriptor": "builtins:hero",
         "race_of_creature": "humanoid",
         "attributes": {
-            "builtins:health": {
-                "current": 100,
-                "max": 100
-            },
-            "builtins:action_points": {
-                "current": 3,
-                "max": 3
-            },
-            "builtins:armor": {
-                "current": 0,
-                "base": 0
-            }
+            "builtins:current_health": 100,
+            "builtins:max_health": 100,
+            "builtins:current_action_points": 3,
+            "builtins:max_action_points": 3,
+            "builtins:current_armor": 0,
+            "builtins:base_armor": 0
         },
         "spell_book": {},
         "status_effects": [],
