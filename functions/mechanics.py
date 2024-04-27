@@ -219,7 +219,7 @@ def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **_) -> i
     if weapon.cost_to_switch > user.get_attribute("current_action_points"):
         raise ValueError(f"User {user.get_name()} does not have enough action points to switch to weapon {weapon_id}.")
     self.trigger_on_change_weapon(changed_for=user, weapon_=weapon,
-                                  previous_weapon=user.weaponry.active_weapon_id)
+                                  previous_weapon=user.weaponry.get_active_weapon())
     user.weaponry.set_active_weapon(weapon_id)
     return weapon.cost_to_switch
 
