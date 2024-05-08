@@ -27,14 +27,13 @@ def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: E
         
 
 def default_dispel_function(hooks: HookContext, status_effect: StatusEffect, **kwargs) -> None:
-    target = kwargs.get("target")
+    target = kwargs.get("applied_to")
     if target is not None:
         target.status_effects.remove_effect(status_effect)
     return None
 
 
 def default_activate_function(hooks: HookContext, status_effect: StatusEffect, **kwargs) -> None:
-    print(f"Default activate function for {status_effect.descriptor} called")
     return None
 
 
@@ -42,7 +41,9 @@ def default_update_function(hooks: HookContext, status_effect: StatusEffect, **k
     if status_effect.duration is not None:
         status_effect.duration -= 1
         if status_effect.duration <= 0:
-            status_effect.dispel(hooks, **kwargs)
+            dispel_kwargs = copy.deepcopy(kwargs)
+            dispel_kwargs.pop("applied_to")
+            status_effect.dispel(hooks, **dispel_kwargs)
 
 
 """
@@ -82,7 +83,7 @@ ATTRIBUTE CHANGING STATUS EFFECTS
 
 
 def attribute_change_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target: Entity = kwargs.get("target")
+    target: Entity = kwargs.get("changed_for")
     if target is None:
         return 0
     target.change_attribute(hooks, status_effect.method_variables['attribute'], status_effect.method_variables['value'])
@@ -90,7 +91,7 @@ def attribute_change_activate(hooks: HookContext, status_effect: StatusEffect, *
 
 
 def attribute_change_dispel(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target: Entity = kwargs.get("target")
+    target: Entity = kwargs.get("applied_to")
     if target is None:
         return 0
     target.change_attribute(hooks, status_effect.method_variables['attribute'], -status_effect.method_variables['value'])
@@ -105,7 +106,7 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A CERTAIN VALUE
 
 
 def hp_change_by_value_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target = kwargs.get("target")
+    target = kwargs.get("changed_for")
     if target is None:
         return 0
     if status_effect.owner is not None:
@@ -130,7 +131,7 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A DICE ROLL VALUE
 
 
 def hp_change_dice_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target = kwargs.get("target")
+    target = kwargs.get("changed_for")
     if target is None:
         return None
     damage_dice_roll = Dice(status_effect.method_variables['time_thrown_dice'], status_effect.method_variables['sides_of_dice'])
@@ -156,7 +157,7 @@ SHIELD STATUS EFFECT
 
 
 def shield_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs): # TODO: Test if lowers damage
-    target = kwargs.get("target")
+    target = kwargs.get("changed_for")
     if target is None:
         return 0
     if kwargs.get("hp_change") is not None:
@@ -190,14 +191,16 @@ STATUSES THAT CHANGE STATE OF TARGET
 
 
 def state_change_activate(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target = kwargs.get("target")
+    target: Entity = kwargs.get("changed_for")
     if target is None:
         return None
     target.change_state(status_effect.method_variables['state'], "+")
 
 
 def state_change_dispel(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target = kwargs.get("target")
+    target: Entity | None = kwargs.get("applied_to")
+    if target is None:
+        return None
     if status_effect.descriptor in target.status_effects and status_effect.static is False:
         target.change_state(status_effect.method_variables['state'], "-")
     return default_dispel_function(hooks, status_effect, **kwargs)
@@ -219,7 +222,7 @@ def summoned_with_deletion_apply(hooks: HookContext, applied_to: Entity, applied
 
 
 def summoned_with_deletion_dispel(hooks: HookContext, status_effect: StatusEffect, **kwargs):
-    target = kwargs.get("target")
+    target = kwargs.get("applied_to")
     if target is None:
         return None
     for _ in range(10):
