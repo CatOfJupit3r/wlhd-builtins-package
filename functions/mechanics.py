@@ -70,7 +70,6 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
                 armor=str(target.get_attribute("current_armor")),
                 damage=str(value.value)
             )
-    fainted_dead_mechanic(ctx, target, changed_by, **kwargs)
     ctx.add_cmd(
         "builtins:creature_takes_damage",
         entity_name=target.get_name(),
@@ -80,6 +79,7 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
     target.increment_attribute('current_health', -(value.value - target.get_attribute(value.element_of_hp_change + '_defense')))
     if target.get_attribute("current_health") < 0:
         target.set_attribute('current_health', 0)
+    fainted_dead_mechanic(ctx, target, changed_by, **kwargs)
     return value.value
 
 
@@ -319,13 +319,13 @@ def apply_status_effect(self: HookContext, applied_to: Entity, status_effect_des
     status_effect_preset = self.import_data("STATUS_EFFECT", status_effect_descriptor)
     if status_effect_preset is None:
         raise ValueError(f"Status effect with descriptor {status_effect_descriptor} not found.")
-    status_effect = StatusEffect().fromPreset(status_effect_preset)
+    status_effect = StatusEffect(**status_effect_preset)
     status_effect.apply(self, applied_to, applied_by, **kwargs)
     return None
 
 
 def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity = None, **kwargs):
-    is_fainted = target.has_effect("builtins:fainted") is not None
+    is_fainted = target.has_effect("builtins:fainted")
     is_alive = target.get_state("builtins:alive") is True
     health_is_zero = target.get_attribute("current_health") <= 0
 
