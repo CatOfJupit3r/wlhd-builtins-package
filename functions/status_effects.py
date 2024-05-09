@@ -97,7 +97,7 @@ def attribute_change_activate(hooks: HookContext, status_effect: StatusEffect, c
 
 
 @custom_hooks.hook(name="attribute_change_dispel", schema_name="DISPEL")
-def attribute_change_dispel(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, *_):
+def attribute_change_dispel(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_):
     applied_to.change_attribute(hooks, status_effect.method_variables['attribute'],
                                 -status_effect.method_variables['value'])
     return default_dispel_function(hooks, status_effect, applied_to=applied_to)
