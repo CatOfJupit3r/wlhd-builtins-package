@@ -1,20 +1,17 @@
 import copy
-import inspect
-import sys
 
 from engine.entities.entity import Entity
 from engine.hook_context import HookContext
 from engine.hook_holder.status_effect_hooks import StatusEffectHooks
 from engine.status_effects.status_effect import StatusEffect
-from engine.utils.extract_hooks import extract_hooks
 from models.game import HpChange, Dice
-
 
 custom_hooks: StatusEffectHooks = StatusEffectHooks()
 
 
-@custom_hooks.apply_hook(name="default_apply_function")
-def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: Entity, status_effect: StatusEffect, **_) -> None:
+@custom_hooks.hook(name="default_apply_function", schema_name="APPLY")
+def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: Entity, status_effect: StatusEffect,
+                           **_) -> None:
     if applied_to is None:
         raise ValueError("No target!")
     status_effect.owner = copy.deepcopy(applied_by)
@@ -29,21 +26,21 @@ def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: E
             if status_effect.duration > applied_to.status_effects[status_effect.descriptor].duration:
                 applied_to.status_effects[status_effect.descriptor].duration = status_effect.duration
         return None
-        
 
-@custom_hooks.dispel_hook(name="default_dispel_function")
+
+@custom_hooks.hook(name="default_dispel_function", schema_name="DISPEL")
 def default_dispel_function(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_) -> None:
     if applied_to is not None:
         applied_to.status_effects.remove_effect(status_effect)
     return None
 
 
-@custom_hooks.activate_hook(name="default_activate_function")
+@custom_hooks.hook(name="default_activate_function", schema_name="ACTIVATE")
 def default_activate_function(hooks: HookContext, status_effect: StatusEffect, **_) -> None:
     return None
 
 
-@custom_hooks.update_hook(name="default_update_function")
+@custom_hooks.hook(name="default_update_function", schema_name="UPDATE")
 def default_update_function(hooks: HookContext, status_effect: StatusEffect, **_) -> None:
     if status_effect.duration is not None:
         status_effect.duration -= 1
@@ -58,7 +55,7 @@ STATUS EFFECTS THAT APPLY ANOTHER STATUS EFFECT
 """
 
 
-@custom_hooks.activate_hook(name="apply_status_effect_activate")
+@custom_hooks.hook(name="apply_status_effect_activate", schema_name="ACTIVATE")
 def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect, **_):
     status_effect_data = status_effect.method_variables['debuff']
     status_effect_to_apply = StatusEffect(status_effect_data['descriptor']).fromJson(status_effect_data)
@@ -67,14 +64,16 @@ def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect
     entity_had_status_effect = (
             status_effect_to_apply.update_type == status_effect_to_apply.activation_type and
             apply_to is not None and  # check if target is even valid
-            apply_to.status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor) is not None # and if it has the status effect
+            apply_to.status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor) is not None
+    # and if it has the status effect
     )
     # its either this or I make delayed activation in trigger_status_effect
     # if SE applies inner SE to target that already has it and update_type is the same, then it will not treat them as separate SEs
 
     # okay, maybe I should use delay eventually... This can cause unexpected behavior when some
     # maybe I get delayed array in trigger_status_effect, add them here and then go over them in trigger (if there are any)
-    status_effect_to_apply.apply(hooks, applied_by=status_effect.owner, applied_by_effect=status_effect, applied_to=apply_to)
+    status_effect_to_apply.apply(hooks, applied_by=status_effect.owner, applied_by_effect=status_effect,
+                                 applied_to=apply_to)
     if entity_had_status_effect is not None:
         applied_status = apply_to.status_effects.get_effect_by_descriptor(status_effect_to_apply.descriptor)
         if applied_status is None:
@@ -90,15 +89,17 @@ ATTRIBUTE CHANGING STATUS EFFECTS
 """
 
 
-@custom_hooks.activate_hook(name="attribute_change_activate")
+@custom_hooks.hook(name="attribute_change_activate", schema_name="ACTIVATE")
 def attribute_change_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, **_):
-    changed_for.change_attribute(hooks, status_effect.method_variables['attribute'], status_effect.method_variables['value'])
+    changed_for.change_attribute(hooks, status_effect.method_variables['attribute'],
+                                 status_effect.method_variables['value'])
     return status_effect.method_variables['value']
 
 
-@custom_hooks.dispel_hook(name="attribute_change_dispel")
+@custom_hooks.hook(name="attribute_change_dispel", schema_name="DISPEL")
 def attribute_change_dispel(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, *_):
-    applied_to.change_attribute(hooks, status_effect.method_variables['attribute'], -status_effect.method_variables['value'])
+    applied_to.change_attribute(hooks, status_effect.method_variables['attribute'],
+                                -status_effect.method_variables['value'])
     return default_dispel_function(hooks, status_effect, applied_to=applied_to)
 
 
@@ -109,10 +110,11 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A CERTAIN VALUE
 """
 
 
-@custom_hooks.activate_hook(name="hp_change_by_value_activate")
+@custom_hooks.hook(name="hp_change_by_value_activate", schema_name="ACTIVATE")
 def hp_change_by_value_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, **_):
     if status_effect.owner is not None:
-        damage = status_effect.method_variables["value"] + status_effect.owner.get_attribute(status_effect["element_of_hp_change"] + '_attack')
+        damage = status_effect.method_variables["value"] + status_effect.owner.get_attribute(
+            status_effect["element_of_hp_change"] + '_attack')
     else:
         damage = status_effect.method_variables["value"]
     hp_change = HpChange(
@@ -132,11 +134,13 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A DICE ROLL VALUE
 """
 
 
-@custom_hooks.activate_hook(name="hp_change_dice_activate")
+@custom_hooks.hook(name="hp_change_dice_activate", schema_name="ACTIVATE")
 def hp_change_dice_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, **_):
-    damage_dice_roll = Dice(status_effect.method_variables['time_thrown_dice'], status_effect.method_variables['sides_of_dice'])
+    damage_dice_roll = Dice(status_effect.method_variables['time_thrown_dice'],
+                            status_effect.method_variables['sides_of_dice'])
     if status_effect.owner is not None:
-        damage = damage_dice_roll.roll(status_effect.owner.get_attribute(status_effect.method_variables['element_of_hp_change'] + '_attack'))
+        damage = damage_dice_roll.roll(
+            status_effect.owner.get_attribute(status_effect.method_variables['element_of_hp_change'] + '_attack'))
     else:
         damage = damage_dice_roll.roll()
     hp_change = HpChange(
@@ -156,8 +160,9 @@ SHIELD STATUS EFFECT
 """
 
 
-@custom_hooks.activate_hook(name="shield_activate")
-def shield_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, hp_change, **_): # TODO: Test if lowers damage
+@custom_hooks.hook(name="shield_activate", schema_name="ACTIVATE")
+def shield_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, hp_change,
+                    **_):  # TODO: Test if lowers damage
     shield_doesnt_block_this_type = hp_change.type_of_hp_change not in status_effect.method_variables["absorb_type"]
     if_doesnt_blocks_every_type = status_effect.method_variables["absorb_type"] != "all"
     if shield_doesnt_block_this_type or if_doesnt_blocks_every_type:
@@ -183,12 +188,12 @@ STATUSES THAT CHANGE STATE OF TARGET
 """
 
 
-@custom_hooks.activate_hook(name="state_change_activate")
+@custom_hooks.hook(name="state_change_activate", schema_name="ACTIVATE")
 def state_change_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, **_):
     changed_for.change_state(status_effect.method_variables['state'], "+")
 
 
-@custom_hooks.dispel_hook(name="state_change_dispel")
+@custom_hooks.hook(name="state_change_dispel", schema_name="DISPEL")
 def state_change_dispel(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_):
     if status_effect.descriptor in applied_to.status_effects and status_effect.static is False:
         applied_to.change_state(status_effect.method_variables['state'], "-")
@@ -202,8 +207,9 @@ SUMMON-RELATED STATUS EFFECTS
 """
 
 
-@custom_hooks.activate_hook(name="summoned_with_deletion_activate")
-def summoned_with_deletion_apply(hooks: HookContext, applied_to: Entity, applied_by: Entity, status_effect: StatusEffect, **kwargs):
+@custom_hooks.hook(name="summoned_with_deletion_activate", schema_name="ACTIVATE")
+def summoned_with_deletion_apply(hooks: HookContext, applied_to: Entity, applied_by: Entity,
+                                 status_effect: StatusEffect, **kwargs):
     debuff_duration = status_effect.method_variables["turns_until_deletion"]
     status_effect.duration = debuff_duration
     return default_apply_function(
@@ -211,7 +217,7 @@ def summoned_with_deletion_apply(hooks: HookContext, applied_to: Entity, applied
     )
 
 
-@custom_hooks.dispel_hook(name="summoned_with_deletion_dispel")
+@custom_hooks.hook(name="summoned_with_deletion_dispel", schema_name="DISPEL")
 def summoned_with_deletion_dispel(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **kwargs):
     for _ in range(10):
         applied_to.change_state("builtins:alive", "-")
