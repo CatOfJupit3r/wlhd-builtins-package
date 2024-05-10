@@ -1,7 +1,9 @@
+import inspect
 from typing import Literal
 
 from engine.entities.entity import Entity
 from engine.hook_context import HookContext
+from models.hold_types import HoldTypes
 from engine.hook_holder.mechanics_hooks import MechanicsHooks
 from engine.spells.spell import Spell
 from engine.status_effects.status_effect import StatusEffect
@@ -191,6 +193,7 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
     "user": Entity
 })
 def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
+    # check if target in radius!
     if user.get_state("builtins:can_attack") is False:
         raise AbortError(
             "builtins:creature_cant_attack",
@@ -278,7 +281,8 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
         raise AbortError(f"User {user.get_name()} does not have enough action points to move.")
     if self.battlefield.move_entity(user, square) == -1:
         raise AbortError(f"User {user.get_name()} cannot move to square {square}.")
-    apply_status_effect(self, user, "builtins:moved", **requires_parameters)
+
+    apply_status_effect(self, applied_to=user, status_effect_descriptor="builtins:moved", **requires_parameters)
     self.trigger_on_move(square=square, moved_entity=user, moved_by=user)
     self.add_cmd(
         "builtins:movement_usage",
@@ -302,13 +306,13 @@ def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
     )
     apply_status_effect(
         self,
-        self.battlefield[first.line, first.column],
-        "builtins:moved"
+        applied_to=self.battlefield[first.line, first.column],
+        status_effect_descriptor="builtins:moved"
     )
     apply_status_effect(
         self,
-        self.battlefield[second.line, second.column],
-        "builtins:moved"
+        applied_to=self.battlefield[second.line, second.column],
+        status_effect_descriptor="builtins:moved"
     )
     return 1
 
@@ -319,7 +323,7 @@ def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
     "silent": bool
 })
 def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = False, **_):
-    spell_preset = self.import_data("SPELL", spell_id)
+    spell_preset = self.import_data(HoldTypes.SPELL, spell_id)
     if spell_preset is None:
         raise ValueError(f"Spell with id {spell_id} not found.")
     spell = Spell().fromPreset(spell_preset)
@@ -339,7 +343,7 @@ def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = Fal
     "silent": bool
 })
 def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False, **_):
-    item_preset = self.import_data("ITEM", item_id)
+    item_preset = self.import_data(HoldTypes.ITEM, item_id)
     if item_preset is None:
         raise ValueError(f"Item with id {item_id} not found.")
     item = Weapon().fromPreset(item_preset)
@@ -359,7 +363,7 @@ def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False
     "silent": bool
 })
 def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: bool = False, **_):
-    weapon_preset = self.import_data("WEAPON", weapon_descriptor)
+    weapon_preset = self.import_data(HoldTypes.WEAPON, weapon_descriptor)
     if weapon_preset is None:
         raise ValueError(f"Weapon with id {weapon_descriptor} not found.")
     weapon = Weapon().fromPreset(weapon_preset)
@@ -380,7 +384,7 @@ def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: 
 })
 def apply_status_effect(self: HookContext, applied_to: Entity, status_effect_descriptor: str,
                         applied_by: Entity | None = None, **kwargs):
-    status_effect_preset = self.import_data("STATUS_EFFECT", status_effect_descriptor)
+    status_effect_preset = self.import_data(HoldTypes.STATUS_EFFECT, status_effect_descriptor)
     if status_effect_preset is None:
         raise ValueError(f"Status effect with descriptor {status_effect_descriptor} not found.")
     status_effect = StatusEffect(**status_effect_preset)
@@ -398,7 +402,7 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
     health_is_zero = target.get_attribute("current_health") <= 0
 
     if is_fainted is False and is_alive and health_is_zero:
-        apply_status_effect(self, target, "builtins:fainted", damaged_by)
+        apply_status_effect(self, target, "builtins:fainted", damaged_by, changed_for=target)
         self.trigger_on_fainted(fainted=target, fainted_by=damaged_by)
         self.add_cmd(
             "builtins:creature_fainted",
@@ -440,7 +444,7 @@ def summon_entity(
         dismiss_if_occupied: bool = False,
         **_
 ):
-    entity_preset = self.import_data("ENTITY", preset_id)
+    entity_preset = self.import_data(HoldTypes.ENTITY, preset_id)
     if entity_preset is None:
         raise AbortError(f"Entity with id {preset_id} not found.")
     entity = Entity().fromPreset(self, entity_preset)
