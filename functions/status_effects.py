@@ -1,4 +1,5 @@
 import copy
+from typing import Literal
 
 from engine.entities.entity import Entity
 from engine.hook_context import HookContext
@@ -11,7 +12,7 @@ custom_hooks: StatusEffectHooks = StatusEffectHooks()
 
 @custom_hooks.hook(name="default_apply_function", schema_name="APPLY")
 def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: Entity, status_effect: StatusEffect,
-                           **_) -> None:
+                           **kwargs) -> None:
     if applied_to is None:
         raise ValueError("No target!")
     status_effect.owner = copy.deepcopy(applied_by)
@@ -19,7 +20,7 @@ def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: E
     if status_effect.descriptor not in applied_to.status_effects:
         applied_to.status_effects.add_effect(status_effect)
         if status_effect.activates_when_applied is True:
-            return status_effect.activate(hooks)
+            return status_effect.activate(hooks, **kwargs)
         return None
     else:
         if status_effect.duration is not None:
@@ -36,12 +37,12 @@ def default_dispel_function(hooks: HookContext, status_effect: StatusEffect, app
 
 
 @custom_hooks.hook(name="default_activate_function", schema_name="ACTIVATE")
-def default_activate_function(hooks: HookContext, status_effect: StatusEffect, **_) -> None:
+def default_activate_function(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_) -> None:
     return None
 
 
 @custom_hooks.hook(name="default_update_function", schema_name="UPDATE")
-def default_update_function(hooks: HookContext, status_effect: StatusEffect, **_) -> None:
+def default_update_function(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_) -> None:
     if status_effect.duration is not None:
         status_effect.duration -= 1
         if status_effect.duration <= 0:
@@ -56,7 +57,7 @@ STATUS EFFECTS THAT APPLY ANOTHER STATUS EFFECT
 
 
 @custom_hooks.hook(name="apply_status_effect_activate", schema_name="ACTIVATE")
-def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect, **_):
+def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_):
     status_effect_data = status_effect.method_variables['debuff']
     status_effect_to_apply = StatusEffect(status_effect_data['descriptor']).fromJson(status_effect_data)
     apply_to = hooks.battlefield.get_entity_by_id(status_effect["apply_to_id"])
@@ -90,7 +91,7 @@ ATTRIBUTE CHANGING STATUS EFFECTS
 
 
 @custom_hooks.hook(name="attribute_change_activate", schema_name="ACTIVATE")
-def attribute_change_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, **_):
+def attribute_change_activate(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, changed_for: Entity, **_):
     changed_for.change_attribute(hooks, status_effect.method_variables['attribute'],
                                  status_effect.method_variables['value'])
     return status_effect.method_variables['value']
@@ -111,7 +112,7 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A CERTAIN VALUE
 
 
 @custom_hooks.hook(name="hp_change_by_value_activate", schema_name="ACTIVATE")
-def hp_change_by_value_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, **_):
+def hp_change_by_value_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, applied_to: Entity, **_):
     if status_effect.owner is not None:
         damage = status_effect.method_variables["value"] + status_effect.owner.get_attribute(
             status_effect["element_of_hp_change"] + '_attack')
@@ -135,7 +136,7 @@ STATUSES THAT CHANGE HEALTH OF TARGET BY A DICE ROLL VALUE
 
 
 @custom_hooks.hook(name="hp_change_dice_activate", schema_name="ACTIVATE")
-def hp_change_dice_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, **_):
+def hp_change_dice_activate(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, changed_for: Entity, **_):
     damage_dice_roll = Dice(status_effect.method_variables['time_thrown_dice'],
                             status_effect.method_variables['sides_of_dice'])
     if status_effect.owner is not None:
@@ -161,7 +162,7 @@ SHIELD STATUS EFFECT
 
 
 @custom_hooks.hook(name="shield_activate", schema_name="ACTIVATE")
-def shield_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, hp_change,
+def shield_activate(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, changed_for: Entity, hp_change: HpChange,
                     **_):  # TODO: Test if lowers damage
     shield_doesnt_block_this_type = hp_change.type_of_hp_change not in status_effect.method_variables["absorb_type"]
     if_doesnt_blocks_every_type = status_effect.method_variables["absorb_type"] != "all"
@@ -189,14 +190,17 @@ STATUSES THAT CHANGE STATE OF TARGET
 
 
 @custom_hooks.hook(name="state_change_activate", schema_name="ACTIVATE")
-def state_change_activate(hooks: HookContext, status_effect: StatusEffect, changed_for: Entity, **_):
-    changed_for.change_state(status_effect.method_variables['state'], "+")
+def state_change_activate(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, changed_for: Entity, **kwargs):
+    for _ in range(status_effect.method_variables.get('times', 1)):
+        changed_for.change_state(status_effect.method_variables['state'], status_effect.method_variables['mode'])
 
 
 @custom_hooks.hook(name="state_change_dispel", schema_name="DISPEL")
 def state_change_dispel(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_):
     if status_effect.descriptor in applied_to.status_effects and status_effect.static is False:
-        applied_to.change_state(status_effect.method_variables['state'], "-")
+        inverse_mode: Literal["+", "-"] = "-" if status_effect.method_variables['mode'] == "+" else "+"
+        for _ in range(status_effect.method_variables.get('times', 1)):
+            applied_to.change_state(status_effect.method_variables['state'], inverse_mode)
     return default_dispel_function(hooks, status_effect, applied_to=applied_to)
 
 
