@@ -116,7 +116,9 @@
         },
         "spell_book": {},
         "status_effects": [],
-        "inventory": {},
+        "inventory": {
+            "builtins:healing_potion": 0
+        },
         "weaponry": [
             "builtins:hero_sword"
         ],

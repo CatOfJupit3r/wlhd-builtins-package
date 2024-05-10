@@ -10,7 +10,7 @@
         "method_variables": {},
         "applies": [],
         "effect_hook": "builtins:hp_change_weapon",
-        "requires": null,
+        "requirements": null,
         "cost_to_switch": 1
     },
     "sword": {
@@ -32,7 +32,7 @@
         },
         "applies": [],
         "effect_hook": "builtins:hp_change_weapon",
-        "requires": {
+        "requirements": {
             "requires": {
                 "square": "Square"
             },
@@ -72,7 +72,7 @@
         },
         "applies": [],
         "effect_hook": "builtins:hp_change_weapon",
-        "requires": {
+        "requirements": {
             "requires": {
                 "square": "Square"
             },

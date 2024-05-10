@@ -34,6 +34,11 @@
         "activate_on_use" : true,
         "update_type" : "round_beginning",
         "activation_type" : "one_time",
+        "method_variables": {
+            "state": "builtins:can_act",
+            "mode": "-",
+            "times": 5
+        },
         "method_hooks" : {
             "dispel" : "builtins:state_change_dispel",
             "activate" : "builtins:state_change_activate",

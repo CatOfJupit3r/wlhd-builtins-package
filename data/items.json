@@ -9,7 +9,39 @@
         "method_variables": {},
         "applies": [],
         "effect_hook": "builtins:hp_change_item",
-        "requires": null,
+        "requirements": null,
+        "cost_to_switch": 1
+    },
+    "healing_potion": {
+        "usage_cost": 1,
+        "cooldown": 2,
+        "is_consumable": true,
+        "quantity": 10,
+        "caster_must_be_in_range": [1, 2, 3, 4, 5, 6],
+        "max_consecutive_uses": null,
+        "method_variables": {
+            "value": 20,
+            "type_of_hp_change": "heal",
+            "element_of_hp_change": "physical"
+        },
+        "applies": [],
+        "effect_hook": "builtins:hp_change_item",
+        "requirements": {
+            "requires": {
+                "square": "Square"
+            },
+            "restrictions": {
+                "square": {
+                    "only_side": null,
+                    "only_lines": null,
+                    "only_columns": null,
+                    "everything_except": null,
+                    "only_descriptor": null,
+                    "only_empty": null,
+                    "exclude_inner_requires": null
+                }
+            }
+        },
         "cost_to_switch": 1
     }
 }
