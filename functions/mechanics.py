@@ -1,12 +1,12 @@
 from typing import Literal
 
-from engine.entities.entity import Entity
+from engine.entities import Entity
 from engine.game_hooks import HookContext, MechanicsHooks
 from engine.items import Item
 from models.hold_types import HoldTypes
 from engine.spells.spell import Spell
-from engine.status_effects.status_effect import StatusEffect
-from engine.weapons.weapon import Weapon
+from engine.status_effects import StatusEffect
+from engine.weapons import Weapon
 from models.exceptions import AbortError
 from models.game import HpChange, Square, Dice
 

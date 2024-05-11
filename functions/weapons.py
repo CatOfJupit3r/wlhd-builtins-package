@@ -1,8 +1,8 @@
 from typing import List
 
-from engine.entities.entity import Entity
+from engine.entities import Entity
 from engine.game_hooks import HookContext, WeaponHooks
-from engine.weapons.weapon import Weapon
+from engine.weapons import Weapon
 from models.exceptions import AbortError
 from models.game import Square, Dice, HpChange
 

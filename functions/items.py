@@ -1,6 +1,6 @@
 from typing import List
 
-from engine.entities.entity import Entity
+from engine.entities import Entity
 from engine.game_hooks import HookContext, ItemHooks
 from engine.items import Item
 from models.exceptions import AbortError

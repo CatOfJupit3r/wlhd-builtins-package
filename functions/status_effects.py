@@ -1,9 +1,9 @@
 import copy
 from typing import Literal
 
-from engine.entities.entity import Entity
+from engine.entities import Entity
 from engine.game_hooks import HookContext, StatusEffectHooks
-from engine.status_effects.status_effect import StatusEffect
+from engine.status_effects import StatusEffect
 from models.game import HpChange, Dice
 
 custom_hooks: StatusEffectHooks = StatusEffectHooks()

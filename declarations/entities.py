@@ -2,7 +2,7 @@ from engine.items import Item
 from installed.builtins.declarations.items import healing_potion
 from installed.builtins.declarations.spells import fireball
 from installed.builtins.declarations.weapons import hero_sword
-from engine.entities.entity import Entity
+from engine.entities import Entity
 from models.decorations import Decoration
 
 hero_stats = {

@@ -1,5 +1,5 @@
 from engine.requirements import RequiresTemplates
-from engine.weapons.weapon import Weapon
+from engine.weapons import Weapon
 from models.decorations import Decoration
 from models.game import Ranges
 
