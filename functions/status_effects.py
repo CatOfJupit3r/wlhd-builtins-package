@@ -2,8 +2,7 @@ import copy
 from typing import Literal
 
 from engine.entities.entity import Entity
-from engine.hook_context import HookContext
-from engine.hook_holder.status_effect_hooks import StatusEffectHooks
+from engine.game_hooks import HookContext, StatusEffectHooks
 from engine.status_effects.status_effect import StatusEffect
 from models.game import HpChange, Dice
 
@@ -59,7 +58,7 @@ STATUS EFFECTS THAT APPLY ANOTHER STATUS EFFECT
 @custom_hooks.hook(name="apply_status_effect_activate", schema_name="ACTIVATE")
 def apply_status_effect_activate(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_):
     status_effect_data = status_effect.method_variables['debuff']
-    status_effect_to_apply = StatusEffect(status_effect_data['descriptor']).fromJson(status_effect_data)
+    status_effect_to_apply = StatusEffect.fromJson(status_effect_data)
     apply_to = hooks.battlefield.get_entity_by_id(status_effect["apply_to_id"])
 
     entity_had_status_effect = (

@@ -1,3 +1,3 @@
-from engine.hook_holder.entity_hooks import EntityHooks
+from engine.game_hooks import EntityHooks
 
 custom_hooks = EntityHooks()

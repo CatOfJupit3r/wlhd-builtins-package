@@ -1,10 +1,9 @@
-import inspect
 from typing import Literal
 
 from engine.entities.entity import Entity
-from engine.hook_context import HookContext
+from engine.game_hooks import HookContext, MechanicsHooks
+from engine.items import Item
 from models.hold_types import HoldTypes
-from engine.hook_holder.mechanics_hooks import MechanicsHooks
 from engine.spells.spell import Spell
 from engine.status_effects.status_effect import StatusEffect
 from engine.weapons.weapon import Weapon
@@ -272,7 +271,7 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
             "creature_cant_move",
             entity_name=user.get_name()
         )
-    square = Square().from_str(square)
+    square = Square.from_str(square)
     if square is None or square.line == 0 or square.column == 0:
         raise AbortError("No square provided")
     if square.line == user.square.line and square.column == user.square.column:
@@ -326,7 +325,7 @@ def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = Fal
     spell_preset = self.import_data(HoldTypes.SPELL, spell_id)
     if spell_preset is None:
         raise ValueError(f"Spell with id {spell_id} not found.")
-    spell = Spell().fromPreset(spell_preset)
+    spell = Spell.fromPreset(spell_preset)
     if not silent:
         self.add_cmd(
             "builtins:add_spell_usage",
@@ -346,7 +345,7 @@ def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False
     item_preset = self.import_data(HoldTypes.ITEM, item_id)
     if item_preset is None:
         raise ValueError(f"Item with id {item_id} not found.")
-    item = Weapon().fromPreset(item_preset)
+    item = Item.fromPreset(item_preset)
     if not silent:
         self.add_cmd(
             "builtins:add_item_usage",
@@ -366,7 +365,7 @@ def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: 
     weapon_preset = self.import_data(HoldTypes.WEAPON, weapon_descriptor)
     if weapon_preset is None:
         raise ValueError(f"Weapon with id {weapon_descriptor} not found.")
-    weapon = Weapon().fromPreset(weapon_preset)
+    weapon = Weapon.fromPreset(weapon_preset)
     if not silent:
         self.add_cmd(
             "builtins:add_weapon_usage",
@@ -447,7 +446,7 @@ def summon_entity(
     entity_preset = self.import_data(HoldTypes.ENTITY, preset_id)
     if entity_preset is None:
         raise AbortError(f"Entity with id {preset_id} not found.")
-    entity = Entity().fromPreset(self, entity_preset)
+    entity = Entity.fromPreset(self, entity_preset)
     if self.battlefield[preferred_square.line, preferred_square.column] is not None:
         if dismiss_if_occupied:
             return None

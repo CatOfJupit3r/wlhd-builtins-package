@@ -1,8 +1,7 @@
 from typing import List
 
 from engine.entities.entity import Entity
-from engine.hook_context import HookContext
-from engine.hook_holder.item_hooks import ItemHooks
+from engine.game_hooks import HookContext, ItemHooks
 from engine.items import Item
 from models.exceptions import AbortError
 from models.game import Square, Dice, HpChange
@@ -19,7 +18,7 @@ def get_weapon_target(ctx: HookContext, item: Item, square: Square) -> List[Enti
 
 @custom_hooks.hook(name="hp_change_item", schema_name="HP_CHANGE")
 def hp_change_item(self: HookContext, item: Item, item_user: Entity, square: str, **_) -> None:
-    square: Square = Square().from_str(square)
+    square: Square = Square.from_str(square)
     targets = get_weapon_target(self, item, square)
     for target in targets:
         if item.method_variables['time_thrown_dice'] is not None:  # if it is a dice roll, then we roll it
@@ -49,7 +48,7 @@ def hp_change_item(self: HookContext, item: Item, item_user: Entity, square: str
 
 @custom_hooks.hook(name="applies_status_effect_item", schema_name="APPLIES_STATUS_EFFECT")
 def applies_status_effect_item(self: HookContext, item: Item, item_user: Entity, square: str, **_) -> None:
-    square: Square = Square().from_str(square)
+    square: Square = Square.from_str(square)
     targets = get_weapon_target(self, item, square)
     for target in targets:
         if item.method_variables.get('status_effect') is not None:
@@ -58,7 +57,7 @@ def applies_status_effect_item(self: HookContext, item: Item, item_user: Entity,
 
 @custom_hooks.hook(name="change_attribute_item", schema_name="CHANGE_ATTRIBUTE")
 def change_attribute_item(self: HookContext, item: Item, item_user: Entity, square: str, **_) -> None:
-    square: Square = Square().from_str(square)
+    square: Square = Square.from_str(square)
     targets = get_weapon_target(self, item, square)
     for target in targets:
         if item.method_variables.get('attribute') is not None:
@@ -67,7 +66,7 @@ def change_attribute_item(self: HookContext, item: Item, item_user: Entity, squa
 
 @custom_hooks.hook(name="add_item_item", schema_name="ADD_ITEM")
 def add_item_item(self: HookContext, item: Item, item_user: Entity, square: str, **_) -> None:
-    square: Square = Square().from_str(square)
+    square: Square = Square.from_str(square)
     targets = get_weapon_target(self, item, square)
     for target in targets:
         if item.method_variables.get('item') is not None:
