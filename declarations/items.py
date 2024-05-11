@@ -1,6 +1,5 @@
 from engine.items import Item
-from engine.requires import RequiresTemplates
-from installed.builtins.functions.items import hp_change_item
+from engine.requirements import RequiresTemplates
 from models.decorations import Decoration
 from models.game import Ranges
 

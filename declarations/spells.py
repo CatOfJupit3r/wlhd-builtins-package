@@ -1,4 +1,4 @@
-from engine.requires import RequiresTemplates
+from engine.requirements import RequiresTemplates
 from engine.spells import Spell
 from models.decorations import Decoration
 
