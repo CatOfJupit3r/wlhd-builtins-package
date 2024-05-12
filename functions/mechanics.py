@@ -487,6 +487,7 @@ def summon_entity(
                 entity_ptr.initiative = 999
             case "random":
                 entity_ptr.initiative = None  # arrange_queue will roll initiative if None
+    self.resubscribe_entity(entity_ptr)
     self.arrange_queue.emit(initiative_reroll=False)
     return None
 

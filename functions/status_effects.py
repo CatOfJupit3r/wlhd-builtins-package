@@ -17,7 +17,7 @@ def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: E
     status_effect.owner = copy.deepcopy(applied_by)
     status_effect.applied_to_id = applied_to.id
     if status_effect.descriptor not in applied_to.status_effects:
-        applied_to.status_effects.add_effect(status_effect)
+        hooks.add_status_effect(status_effect, applied_to)
         if status_effect.activates_when_applied is True:
             return status_effect.activate(hooks, **kwargs)
         return None
@@ -31,7 +31,7 @@ def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: E
 @custom_hooks.hook(name="default_dispel_function", schema_name="DISPEL")
 def default_dispel_function(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, **_) -> None:
     if applied_to is not None:
-        applied_to.status_effects.remove_effect(status_effect)
+        hooks.remove_status_effect(status_effect, applied_to)
     return None
 
 
