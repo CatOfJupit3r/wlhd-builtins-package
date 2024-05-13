@@ -5,7 +5,7 @@ from models.game import Ranges
 
 weapon_error = Weapon(
     descriptor="builtins:weapon_error",
-    decoration=Decoration(name="builtins:weapon_error", sprite="builtins:weapon_error"),
+    decoration=Decoration(name="builtins:weapon_error", sprite="builtins:weapon_error", description="builtins:weapon_error.desc"),
     usage_cost=0,
     cooldown=0,
     is_consumable=False,
@@ -20,7 +20,7 @@ weapon_error = Weapon(
 
 regular_sword = Weapon(
     descriptor="builtins:sword",
-    decoration=Decoration(name="builtins:sword", sprite="builtins:sword"),
+    decoration=Decoration(name="builtins:sword", sprite="builtins:sword", description="builtins:sword.desc"),
     usage_cost=1,
     cooldown=0,
     is_consumable=False,
@@ -40,7 +40,7 @@ regular_sword = Weapon(
 
 hero_sword = Weapon(
     descriptor="builtins:hero_sword",
-    decoration=Decoration(name="builtins:sword", sprite="builtins:sword"),
+    decoration=Decoration(name="builtins:sword", sprite="builtins:sword", description="builtins:sword.desc"),
     usage_cost=1,
     cooldown=0,
     is_consumable=False,

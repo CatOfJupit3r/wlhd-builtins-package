@@ -13,16 +13,29 @@
         "cost_to_switch": 1
     },
     "healing_potion": {
+        "decorations": {
+            "name": "builtins:healing_potion.name",
+            "sprite": "builtins:item",
+            "description": "builtins:healing_potion.desc"
+        },
         "usage_cost": 1,
-        "cooldown": 2,
+        "cooldown": 1,
         "is_consumable": true,
-        "quantity": 10,
-        "caster_must_be_in_range": [1, 2, 3, 4, 5, 6],
+        "quantity": 1,
+        "caster_must_be_in_range": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
         "max_consecutive_uses": null,
         "method_variables": {
-            "value": 20,
+            "time_thrown_dice": 1,
+            "sides_of_dice": 6,
             "type_of_hp_change": "heal",
-            "element_of_hp_change": "physical"
+            "element_of_hp_change": "builtins:physical"
         },
         "applies": [],
         "effect_hook": "builtins:hp_change_item",
@@ -41,7 +54,6 @@
                     "exclude_inner_requires": null
                 }
             }
-        },
-        "cost_to_switch": 1
+        }
     }
 }

@@ -4,7 +4,7 @@ from models.decorations import Decoration
 
 fireball = Spell(
     descriptor="builtins:fireball",
-    decoration=Decoration(name="builtins:fireball", sprite="builtins:pyromancy"),
+    decoration=Decoration(name="builtins:fireball", sprite="builtins:pyromancy", description="builtins:fireball.desc"),
     cost=1,
     caster_must_be_in_range=[3, 4, 5, 6],
     cooldown=0,

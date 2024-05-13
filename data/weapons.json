@@ -1,16 +1,42 @@
 {
     "weapon_error": {
-        "descriptor": "builtins:weapon_error",
-        "usage_cost": 1,
-        "cooldown": 999,
+        "decorations": {
+            "name": "builtins:weapon_error.name",
+            "sprite": "builtins:weapon",
+            "description": "builtins:weapon_error.desc"
+        },
+        "usage_cost": 0,
+        "cooldown": 0,
         "is_consumable": false,
         "quantity": 1,
-        "caster_must_be_in_range": [1, 2, 3, 4, 5, 6],
+        "caster_must_be_in_range": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
         "max_consecutive_uses": null,
         "method_variables": {},
         "applies": [],
-        "effect_hook": "builtins:hp_change_weapon",
-        "requirements": null,
+        "effect_hook": "builtins:dummy_weapon",
+        "requirements": {
+            "requires": {
+                "square": "Square"
+            },
+            "restrictions": {
+                "square": {
+                    "only_side": null,
+                    "only_lines": null,
+                    "only_columns": null,
+                    "everything_except": null,
+                    "only_descriptor": null,
+                    "only_empty": null,
+                    "exclude_inner_requires": null
+                }
+            }
+        },
         "cost_to_switch": 1
     },
     "sword": {
@@ -54,7 +80,11 @@
         "cost_to_switch": 1
     },
     "hero_sword": {
-        "descriptor": "builtins:hero_sword",
+        "decorations": {
+            "name": "builtins:hero_sword.name",
+            "sprite": "builtins:weapon",
+            "description": "builtins:hero_sword.desc"
+        },
         "usage_cost": 1,
         "cooldown": 0,
         "is_consumable": false,

@@ -37,38 +37,6 @@
             "builtins:pass": 0
         }
     },
-    "target_dummy": {
-        "descriptor": "builtins:target_dummy",
-        "race_of_creature": "mechanoid",
-        "attributes": {
-            "builtins:current_health": 50,
-            "builtins:max_health": 100,
-            "builtins:current_action_points": 0,
-            "builtins:max_action_points": 2,
-            "builtins:current_armor": 0,
-            "builtins:base_armor": 20
-        },
-        "spell_book": {},
-        "status_effects": [],
-        "inventory": {},
-        "weaponry": [],
-        "states": {
-            "builtins:can_move": 1,
-            "builtins:can_act": 1,
-            "builtins:can_attack": 1,
-            "builtins:can_spell": 1,
-            "builtins:damageable": 1,
-            "builtins:visible": 1,
-            "builtins:adrenaline": 0,
-            "builtins:alive": 1
-        },
-        "cost_dictionary": {
-            "builtins:move": 1,
-            "builtins:spell": 1,
-            "builtins:use": 1,
-            "builtins:pass": 0
-        }
-    },
     "target_dummy_large": {
         "descriptor": "builtins:target_dummy_large",
         "race_of_creature": "mechanoid",
@@ -104,28 +72,144 @@
         }
     },
     "hero": {
-        "descriptor": "builtins:hero",
+        "decorations": {
+            "name": "builtins:hero.name",
+            "sprite": "builtins:hero",
+            "description": "builtins:hero.desc"
+        },
         "race_of_creature": "humanoid",
         "attributes": {
-            "builtins:current_health": 100,
+            "builtins:current_health": -1,
             "builtins:max_health": 100,
-            "builtins:current_action_points": 3,
-            "builtins:max_action_points": 3,
+            "builtins:current_action_points": 0,
+            "builtins:max_action_points": 10,
             "builtins:current_armor": 0,
-            "builtins:base_armor": 0
+            "builtins:base_armor": 50,
+            "builtins:weapon_bonus_damage": 0,
+            "builtins:weapon_healing_damage": 0,
+            "builtins:athletics": 0,
+            "builtins:caution": 0,
+            "builtins:dexterity": 0,
+            "builtins:persuasion": 0,
+            "builtins:medicine": 0,
+            "builtins:reflexes": 0,
+            "builtins:strength": 0,
+            "builtins:will": 0,
+            "builtins:physical_attack": 10,
+            "builtins:physical_defense": 10,
+            "builtins:fire_attack": 0,
+            "builtins:fire_defense": 0,
+            "builtins:air_attack": 0,
+            "builtins:air_defense": 0,
+            "builtins:water_attack": 0,
+            "builtins:water_defense": 0,
+            "builtins:earth_attack": 0,
+            "builtins:earth_defense": 0,
+            "builtins:nature_attack": 0,
+            "builtins:nature_defense": 0
         },
-        "spell_book": {},
+        "spell_book": [
+            {
+                "descriptor": "builtins:fireball",
+                "current_cooldown": 0,
+                "current_consecutive_uses": 0
+            }
+        ],
         "status_effects": [],
-        "inventory": {
-            "builtins:healing_potion": 0
-        },
+        "inventory": [
+            {
+                "descriptor": "builtins:healing_potion",
+                "quantity": 1
+            },
+            {
+                "descriptor": "builtins:healing_potion",
+                "quantity": 1
+            },
+            {
+                "descriptor": "builtins:healing_potion",
+                "quantity": 1
+            },
+            {
+                "descriptor": "builtins:healing_potion",
+                "quantity": 1
+            }
+        ],
         "weaponry": [
-            "builtins:hero_sword"
+            {
+                "descriptor": "builtins:hero_sword",
+                "is_active": true,
+                "quantity": 1
+            }
         ],
         "states": {
             "builtins:can_move": 1,
             "builtins:can_act": 1,
             "builtins:can_attack": 1,
+            "builtins:can_change_weapon": 1,
+            "builtins:can_spell": 1,
+            "builtins:damageable": 1,
+            "builtins:visible": 1,
+            "builtins:adrenaline": 0,
+            "builtins:alive": 1
+        },
+        "cost_dictionary": {
+            "builtins:move": 1,
+            "builtins:spell": 1,
+            "builtins:use": 1,
+            "builtins:pass": 0
+        }
+    },
+    "target_dummy": {
+        "decorations": {
+            "name": "builtins:target_dummy.name",
+            "sprite": "builtins:target_dummy",
+            "description": "builtins:target_dummy.desc"
+        },
+        "race_of_creature": "mechanoid",
+        "attributes": {
+            "builtins:current_health": -1,
+            "builtins:max_health": 100,
+            "builtins:current_action_points": 0,
+            "builtins:max_action_points": 10,
+            "builtins:current_armor": 0,
+            "builtins:base_armor": 50,
+            "builtins:weapon_bonus_damage": 0,
+            "builtins:weapon_healing_damage": 0,
+            "builtins:athletics": 0,
+            "builtins:caution": 0,
+            "builtins:dexterity": 0,
+            "builtins:persuasion": 0,
+            "builtins:medicine": 0,
+            "builtins:reflexes": 0,
+            "builtins:strength": 0,
+            "builtins:will": 0,
+            "builtins:physical_attack": 10,
+            "builtins:physical_defense": 5,
+            "builtins:fire_attack": 0,
+            "builtins:fire_defense": 0,
+            "builtins:air_attack": 0,
+            "builtins:air_defense": 0,
+            "builtins:water_attack": 0,
+            "builtins:water_defense": 0,
+            "builtins:earth_attack": 0,
+            "builtins:earth_defense": 0,
+            "builtins:nature_attack": 0,
+            "builtins:nature_defense": 0
+        },
+        "spell_book": [],
+        "status_effects": [],
+        "inventory": [
+            {
+                "descriptor": "builtins:healing_potion",
+                "quantity": 1
+            }
+        ],
+        "weaponry": [],
+        "states": {
+            "builtins:can_move": 1,
+            "builtins:can_act": 1,
+            "builtins:can_attack": 1,
+            "builtins:can_change_weapon": 1,
             "builtins:can_spell": 1,
             "builtins:damageable": 1,
             "builtins:visible": 1,

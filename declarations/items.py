@@ -5,7 +5,7 @@ from models.game import Ranges
 
 item_error = Item(
     descriptor="builtins:error",
-    decoration=Decoration(name="builtins:error", sprite="builtins:error"),
+    decoration=Decoration(name="builtins:error", sprite="builtins:error", description="builtins:error.desc"),
     usage_cost=1,
     cooldown_value=999,
     is_consumable=False,
@@ -16,7 +16,7 @@ item_error = Item(
 
 healing_potion = Item(
     descriptor="builtins:healing_potion",
-    decoration=Decoration(name="builtins:healing_potion", sprite="builtins:potion"),
+    decoration=Decoration(name="builtins:healing_potion", sprite="builtins:potion", description="builtins:healing_potion.desc"),
     usage_cost=1,
     cooldown_value=1,
     is_consumable=True,
