@@ -40,7 +40,11 @@
         "cost_to_switch": 1
     },
     "sword": {
-        "descriptor": "builtins:sword",
+        "decorations": {
+            "name": "builtins:sword.name",
+            "sprite": "builtins:weapon",
+            "description": "builtins:sword.desc"
+        },
         "usage_cost": 1,
         "cooldown": 0,
         "is_consumable": false,

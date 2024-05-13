@@ -213,7 +213,7 @@ SUMMON-RELATED STATUS EFFECTS
 @custom_hooks.hook(name="summoned_with_deletion_activate", schema_name="ACTIVATE")
 def summoned_with_deletion_apply(hooks: HookContext, applied_to: Entity, applied_by: Entity,
                                  status_effect: StatusEffect, **kwargs):
-    debuff_duration = status_effect.method_variables["turns_until_deletion"]
+    debuff_duration = status_effect.method_variables.get("turns_until_deletion", 1)
     status_effect.duration = debuff_duration
     return default_apply_function(
         hooks, applied_to, applied_by, status_effect, **kwargs

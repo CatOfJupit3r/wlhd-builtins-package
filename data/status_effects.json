@@ -1,77 +1,106 @@
 {
-    "status_effect_error" : {
-        "duration" : 1,
-        "activate_on_use" : false,
-        "activation_type" : "turn_beginning",
-        "update_type" : "turn_beginning",
-        "method_hooks" : {
-            "activate" : null,
-            "apply" : null,
-            "dispel" : null,
-            "update" : null
+    "status_effect_error": {
+        "decorations": {
+            "name": "builtins:status_effect_error.name",
+            "sprite": "builtins:status_effect",
+            "description": "builtins:status_effect_error.desc"
         },
-        "static" : false,
-        "visibility" : false
-    },
-    "moved" : {
-        "duration" : 1,
-        "static" : false,
-        "visibility" : false,
-        "activate_on_use" : false,
-        "update_type" : "round_beginning",
-        "activation_type" : "round_beginning",
-        "method_hooks" : {
-            "activate" : null,
-            "apply" : null,
-            "dispel" : null,
-            "update" : null
+        "duration": 1,
+        "static": false,
+        "visibility": false,
+        "activate_on_use": true,
+        "update_type": "turn_beginning",
+        "activation_type": "turn_beginning",
+        "method_variables": {},
+        "method_hooks": {
+            "apply": null,
+            "update": null,
+            "dispel": null,
+            "activate": null
         }
     },
-    "fainted" : {
-        "duration" : null,
-        "static" : false,
-        "visibility" : true,
-        "activate_on_use" : true,
-        "update_type" : "round_beginning",
-        "activation_type" : "one_time",
+    "fainted": {
+        "decorations": {
+            "name": "builtins:fainted.name",
+            "sprite": "builtins:status_effect",
+            "description": "builtins:fainted.desc"
+        },
+        "duration": 1,
+        "static": false,
+        "visibility": true,
+        "activate_on_use": true,
+        "update_type": "round_beginning",
+        "activation_type": "one_time",
         "method_variables": {
             "state": "builtins:can_act",
             "mode": "-",
             "times": 5
         },
-        "method_hooks" : {
-            "dispel" : "builtins:state_change_dispel",
-            "activate" : "builtins:state_change_activate",
-            "update" : null,
-            "apply" : null
+        "method_hooks": {
+            "apply": null,
+            "update": null,
+            "dispel": "builtins:state_change_dispel",
+            "activate": "builtins:state_change_activate"
         }
     },
-    "summoned" : {
-        "duration" : null,
-        "static" : false,
-        "visibility" : false,
-        "activate_on_use" : false,
-        "update_type" : "one_time",
-        "activation_type" : "one_time",
-        "method_hooks" : {
-            "activate" : null,
-            "apply" : null,
-            "dispel" : null,
-            "update" : null
+    "summoned": {
+        "decorations": {
+            "name": "builtins:summoned.name",
+            "sprite": "builtins:status_effect",
+            "description": "builtins:summoned.desc"
+        },
+        "duration": null,
+        "static": false,
+        "visibility": true,
+        "activate_on_use": false,
+        "update_type": "one_time",
+        "activation_type": "one_time",
+        "method_variables": {},
+        "method_hooks": {
+            "apply": null,
+            "update": null,
+            "dispel": null,
+            "activate": null
         }
     },
-    "summoned_with_deletion" : {
-        "duration" : null,
-        "static" : false,
-        "visibility" : true,
-        "activate_on_use" : false,
-        "update_type" : "round_beginning",
-        "activation_type" : "one_time",
-        "method_hooks" : {
-            "activate" : null,
-            "apply" : "builtins:summoned_with_deletion_apply",
-            "dispel" : "builtins:summoned_with_deletion_dispel",
-            "update" : null
+    "summoned_with_deletion": {
+        "decorations": {
+            "name": "builtins:summoned_with_deletion.name",
+            "sprite": "builtins:status_effect",
+            "description": "builtins:summoned_with_deletion.desc"
+        },
+        "duration": null,
+        "static": false,
+        "visibility": true,
+        "activate_on_use": false,
+        "update_type": "round_beginning",
+        "activation_type": "one_time",
+        "method_variables": {},
+        "method_hooks": {
+            "apply": "summoned_with_deletion_apply",
+            "update": null,
+            "dispel": "builtins:summoned_with_deletion_dispel",
+            "activate": null
+        }
+    },
+    "moved": {
+        "decorations": {
+            "name": "builtins:moved.name",
+            "sprite": "builtins:status_effect",
+            "description": "builtins:moved.desc"
+        },
+        "duration": 1,
+        "static": false,
+        "visibility": false,
+        "activate_on_use": false,
+        "update_type": "round_beginning",
+        "activation_type": "round_beginning",
+        "method_variables": {},
+        "method_hooks": {
+            "apply": null,
+            "update": null,
+            "dispel": null,
+            "activate": null
         }
     }
 }

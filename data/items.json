@@ -1,16 +1,42 @@
 {
     "item_error": {
+        "decorations": {
+            "name": "builtins:error.name",
+            "sprite": "builtins:item",
+            "description": "builtins:error.desc"
+        },
         "usage_cost": 1,
         "cooldown": 999,
         "is_consumable": false,
         "quantity": 1,
-        "caster_must_be_in_range": [1, 2, 3, 4, 5, 6],
+        "caster_must_be_in_range": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
         "max_consecutive_uses": null,
         "method_variables": {},
         "applies": [],
-        "effect_hook": "builtins:hp_change_item",
-        "requirements": null,
-        "cost_to_switch": 1
+        "effect_hook": "builtins:item_effect_template",
+        "requirements": {
+            "requires": {
+                "square": "Square"
+            },
+            "restrictions": {
+                "square": {
+                    "only_side": null,
+                    "only_lines": null,
+                    "only_columns": null,
+                    "everything_except": null,
+                    "only_descriptor": null,
+                    "only_empty": null,
+                    "exclude_inner_requires": null
+                }
+            }
+        }
     },
     "healing_potion": {
         "decorations": {

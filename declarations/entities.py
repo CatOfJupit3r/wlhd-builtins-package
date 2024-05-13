@@ -5,14 +5,22 @@ from installed.builtins.declarations.spells import fireball
 from installed.builtins.declarations.weapons import hero_sword
 from models.decorations import Decoration
 
-hero_stats = {
-    "builtins:current_health": -1,
-    "builtins:max_health": 100,
-    "builtins:max_action_points": 10,
-    "builtins:base_armor": 50,
-    "builtins:physical_attack": 10,
-    "builtins:physical_defense": 10,
-}
+entity_error = Entity(
+    "builtins:error",
+    Decoration("builtins:error.name", "builtins:error", "builtins:error.desc"),
+    None,
+    {
+        "type": "game_logic"
+    },
+    "mechanoid",
+    attributes={
+        "builtins:current_health": -1,
+        "builtins:max_health": 1,
+        "builtins:max_action_points": 1,
+    },
+)
+entity_error.change_state("builtins:can_act", "-")
+entity_error.change_state("builtins:alive", "-")
 
 hero = Entity(
     "builtins:hero",
@@ -21,7 +29,14 @@ hero = Entity(
     None,
     None,
     "humanoid",
-    attributes=hero_stats,
+    attributes={
+        "builtins:current_health": -1,
+        "builtins:max_health": 100,
+        "builtins:max_action_points": 10,
+        "builtins:base_armor": 50,
+        "builtins:physical_attack": 10,
+        "builtins:physical_defense": 10,
+    },
 
 )
 
@@ -52,3 +67,13 @@ target_dummy = Entity(
 )
 
 target_dummy.inventory.add_item(Item(**healing_potion.toJson()))
+
+
+target_dummy_large = Entity.fromJson(target_dummy.toJson(optimize=True))
+
+target_dummy_large.attributes["builtins:current_health"] = -1
+target_dummy_large.attributes["builtins:max_health"] = 250
+target_dummy_large.attributes["builtins:base_armor"] = 100
+target_dummy_large.attributes["builtins:physical_attack"] = 20
+target_dummy_large.attributes["builtins:physical_defense"] = 10
+

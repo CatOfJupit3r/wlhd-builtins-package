@@ -1,68 +1,31 @@
 {
     "entity_error": {
-        "descriptor": "builtins:entity_error",
+        "decorations": {
+            "name": "builtins:error.name",
+            "sprite": "builtins:error",
+            "description": "builtins:error.desc"
+        },
         "race_of_creature": "mechanoid",
         "attributes": {
-            "builtins:health": {
-                "current": 1,
-                "max": 1
-            },
-            "builtins:action_points": {
-                "current": 0,
-                "max": 2
-            },
-            "builtins:armor": {
-                "current": 0,
-                "base": 0
-            }
+            "builtins:current_health": 1,
+            "builtins:max_health": 1,
+            "builtins:max_action_points": 1
         },
-        "spell_book": {},
+        "spell_book": [],
         "status_effects": [],
-        "inventory": {},
+        "inventory": [],
         "weaponry": [],
         "states": {
             "builtins:can_move": 1,
-            "builtins:can_act": 1,
+            "builtins:can_act": 0,
             "builtins:can_attack": 1,
+            "builtins:can_change_weapon": 1,
             "builtins:can_spell": 1,
+            "builtins:can_item": 1,
             "builtins:damageable": 1,
             "builtins:visible": 1,
             "builtins:adrenaline": 0,
             "builtins:alive": 0
-        },
-        "cost_dictionary": {
-            "builtins:move": 1,
-            "builtins:spell": 1,
-            "builtins:use": 1,
-            "builtins:pass": 0
-        }
-    },
-    "target_dummy_large": {
-        "descriptor": "builtins:target_dummy_large",
-        "race_of_creature": "mechanoid",
-        "attributes": {
-            "builtins:current_health": 100,
-            "builtins:max_health": 250,
-            "builtins:current_action_points": 3,
-            "builtins:max_action_points": 3,
-            "builtins:current_armor": 10,
-            "builtins:base_armor": 50
-        },
-        "spell_book": {},
-        "status_effects": [],
-        "inventory": {},
-        "weaponry": [
-            "builtins:sword"
-        ],
-        "states": {
-            "builtins:can_move": 1,
-            "builtins:can_act": 1,
-            "builtins:can_attack": 1,
-            "builtins:can_spell": 1,
-            "builtins:damageable": 1,
-            "builtins:visible": 1,
-            "builtins:adrenaline": 0,
-            "builtins:alive": 1
         },
         "cost_dictionary": {
             "builtins:move": 1,
@@ -79,34 +42,12 @@
         },
         "race_of_creature": "humanoid",
         "attributes": {
-            "builtins:current_health": -1,
+            "builtins:current_health": 100,
             "builtins:max_health": 100,
-            "builtins:current_action_points": 0,
             "builtins:max_action_points": 10,
-            "builtins:current_armor": 0,
             "builtins:base_armor": 50,
-            "builtins:weapon_bonus_damage": 0,
-            "builtins:weapon_healing_damage": 0,
-            "builtins:athletics": 0,
-            "builtins:caution": 0,
-            "builtins:dexterity": 0,
-            "builtins:persuasion": 0,
-            "builtins:medicine": 0,
-            "builtins:reflexes": 0,
-            "builtins:strength": 0,
-            "builtins:will": 0,
             "builtins:physical_attack": 10,
-            "builtins:physical_defense": 10,
-            "builtins:fire_attack": 0,
-            "builtins:fire_defense": 0,
-            "builtins:air_attack": 0,
-            "builtins:air_defense": 0,
-            "builtins:water_attack": 0,
-            "builtins:water_defense": 0,
-            "builtins:earth_attack": 0,
-            "builtins:earth_defense": 0,
-            "builtins:nature_attack": 0,
-            "builtins:nature_defense": 0
+            "builtins:physical_defense": 10
         },
         "spell_book": [
             {
@@ -147,6 +88,7 @@
             "builtins:can_attack": 1,
             "builtins:can_change_weapon": 1,
             "builtins:can_spell": 1,
+            "builtins:can_item": 1,
             "builtins:damageable": 1,
             "builtins:visible": 1,
             "builtins:adrenaline": 0,
@@ -167,34 +109,12 @@
         },
         "race_of_creature": "mechanoid",
         "attributes": {
-            "builtins:current_health": -1,
+            "builtins:current_health": 100,
             "builtins:max_health": 100,
-            "builtins:current_action_points": 0,
             "builtins:max_action_points": 10,
-            "builtins:current_armor": 0,
             "builtins:base_armor": 50,
-            "builtins:weapon_bonus_damage": 0,
-            "builtins:weapon_healing_damage": 0,
-            "builtins:athletics": 0,
-            "builtins:caution": 0,
-            "builtins:dexterity": 0,
-            "builtins:persuasion": 0,
-            "builtins:medicine": 0,
-            "builtins:reflexes": 0,
-            "builtins:strength": 0,
-            "builtins:will": 0,
             "builtins:physical_attack": 10,
-            "builtins:physical_defense": 5,
-            "builtins:fire_attack": 0,
-            "builtins:fire_defense": 0,
-            "builtins:air_attack": 0,
-            "builtins:air_defense": 0,
-            "builtins:water_attack": 0,
-            "builtins:water_defense": 0,
-            "builtins:earth_attack": 0,
-            "builtins:earth_defense": 0,
-            "builtins:nature_attack": 0,
-            "builtins:nature_defense": 0
+            "builtins:physical_defense": 5
         },
         "spell_book": [],
         "status_effects": [],
@@ -211,6 +131,50 @@
             "builtins:can_attack": 1,
             "builtins:can_change_weapon": 1,
             "builtins:can_spell": 1,
+            "builtins:can_item": 1,
+            "builtins:damageable": 1,
+            "builtins:visible": 1,
+            "builtins:adrenaline": 0,
+            "builtins:alive": 1
+        },
+        "cost_dictionary": {
+            "builtins:move": 1,
+            "builtins:spell": 1,
+            "builtins:use": 1,
+            "builtins:pass": 0
+        }
+    },
+    "target_dummy_large": {
+        "decorations": {
+            "name": "builtins:target_dummy.name",
+            "sprite": "builtins:target_dummy",
+            "description": "builtins:target_dummy.desc"
+        },
+        "race_of_creature": "mechanoid",
+        "attributes": {
+            "builtins:current_health": -1,
+            "builtins:max_health": 250,
+            "builtins:max_action_points": 10,
+            "builtins:base_armor": 100,
+            "builtins:physical_attack": 20,
+            "builtins:physical_defense": 10
+        },
+        "spell_book": [],
+        "status_effects": [],
+        "inventory": [
+            {
+                "descriptor": "builtins:healing_potion",
+                "quantity": 1
+            }
+        ],
+        "weaponry": [],
+        "states": {
+            "builtins:can_move": 1,
+            "builtins:can_act": 1,
+            "builtins:can_attack": 1,
+            "builtins:can_change_weapon": 1,
+            "builtins:can_spell": 1,
+            "builtins:can_item": 1,
             "builtins:damageable": 1,
             "builtins:visible": 1,
             "builtins:adrenaline": 0,
