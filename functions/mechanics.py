@@ -132,7 +132,7 @@ def spend_action_points(self: HookContext, target: Entity, value: int, **_) -> i
     return value
 
 
-@custom_hooks.hook(name="gain_action_points", schema={
+@custom_hooks.hook(name="cast_spell", schema={
     "caster": Entity,
     "spell_id": str,
 })
@@ -153,7 +153,7 @@ def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_para
         entity_name=caster.get_name(),
         spell_name=spell.get_name()
     )  # will look into passing parameters to this.
-    usage_result = self.use_hook("SPELL", spell.effect_hook, caster=caster, **requires_parameters)
+    usage_result = self.use_hook("SPELL", spell.effect_hook, caster=caster, spell=spell, **requires_parameters)
     self.trigger_on_spell_cast(spell_=spell, caster=caster, **requires_parameters)
     if usage_result is None:
         return spell.usage_cost
@@ -181,7 +181,7 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
         entity_name=user.get_name(),
         item_name=item.get_name()
     )
-    usage_result = self.use_hook("ITEM", item.effect_hook, user=user, **requires_parameters)
+    usage_result = self.use_hook("ITEM", item.effect_hook, item_user=user, item=item, **requires_parameters)
     self.trigger_on_item_use(item_=item, used_by=user, **requires_parameters)
     if usage_result is None:
         return item.usage_cost
