@@ -29,6 +29,7 @@
         "max_consecutive_uses": null,
         "consecutive_uses_reset_on_cooldown_update": true,
         "effect_hook": "builtins:spell_effect_template",
+        "method_variables": {},
         "school": "builtins:pyromancy"
     },
     "fireball": {
@@ -59,6 +60,12 @@
         "max_consecutive_uses": 1,
         "consecutive_uses_reset_on_cooldown_update": true,
         "effect_hook": "builtins:hp_change_spell",
+        "method_variables": {
+            "time_thrown_dice": 3,
+            "sides_of_dice": 8,
+            "type_of_hp_change": "damage",
+            "element_of_hp_change": "builtins:fire"
+        },
         "school": "builtins:pyromancy"
     }
 }
