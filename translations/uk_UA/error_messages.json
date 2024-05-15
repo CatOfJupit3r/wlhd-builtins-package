@@ -8,5 +8,14 @@
     "invalid_action_descriptor": "Недійсний дескриптор дії: {{descriptor}}!",
     "error_executing_action": "Помилка виконання дії: {{action}}! {{reason}}",
     "invalid_input": "Недійсний ввід!",
-    "corrupted_input": "Пошкоджений ввід!"
+    "corrupted_input": "Пошкоджений ввід!",
+    "cant_swap_squares": "Не можна обміняти місцями {{first}} та {{second}}!",
+    "missing_square_movement": "Відсутній квадрат для переміщення!",
+    "not_enough_ap_movement": "{{entity_name}} не має достатньо дій для переміщення!",
+    "cannot_move_to_square": "{{entity_name}} не зміг переміститися на {{square}}!",
+    "no_summon_not_found_entity": "{{entity_name}} не був викликаний, оскільки не було знайдено відповідної істоти!",
+    "no_summon_not_found_free_square": "{{entity_name}} не був викликаний, оскільки не було знайдено вільних квадратів на полі бою!",
+    "weapon_not_found": "Зброя не знайдена!",
+    "item_not_found": "Предмет не знайдено!",
+    "spell_not_found": "Закляття не знайдено!"
 }

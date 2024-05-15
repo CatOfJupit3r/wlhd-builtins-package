@@ -3,12 +3,12 @@ from typing import Literal
 from engine.entities import Entity
 from engine.game_hooks import HookContext, MechanicsHooks
 from engine.items import Item
-from models.hold_types import HoldTypes
 from engine.spells.spell import Spell
 from engine.status_effects import StatusEffect
 from engine.weapons import Weapon
 from models.exceptions import AbortError
 from models.game import HpChange, Square, Dice
+from models.hold_types import HoldTypes
 
 custom_hooks = MechanicsHooks()
 
@@ -59,27 +59,29 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
     if target.get_attribute("current_armor") > 0:
         remaining_armor = target.get_attribute("current_armor") - value.value
         if remaining_armor <= 0:
-            value.value = abs(remaining_armor)
             ctx.add_cmd(
                 "builtins:creature_takes_damage_shield_broken",
                 entity_name=target.get_name(),
-                armor=str(target.get_attribute("current_armor")),
-                damage=str(value.value)
+                damage=str(value.value),
+                element_of_hp_change=value.element_of_hp_change,
+                damage_remaining=str(abs(remaining_armor))
             )
+            value.value = abs(remaining_armor)
             target.set_attribute('current_armor', 0)
         else:
-            target.set_attribute('current_armor', remaining_armor)
-            value.value = 0
+            # ENTITY_NAME armor consumes DAMAGE. Remaining armor: REMAINING_ARMOR
             ctx.add_cmd(
                 "builtins:creature_takes_damage_shield",
                 entity_name=target.get_name(),
-                armor=str(target.get_attribute("current_armor")),
+                remaining_armor=str(remaining_armor),
                 damage=str(value.value)
             )
+            target.set_attribute('current_armor', remaining_armor)
+            value.value = 0
     ctx.add_cmd(
         "builtins:creature_takes_damage",
         entity_name=target.get_name(),
-        value=str(value.value),
+        damage=str(value.value),
         element_of_hp_change=value.element_of_hp_change
     )
     target.increment_attribute('current_health',
@@ -139,7 +141,7 @@ def spend_action_points(self: HookContext, target: Entity, value: int, **_) -> i
 def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_parameters) -> int:
     if caster.get_state("builtins:can_spell") is False:
         raise AbortError(
-            "creature_cant_spell",
+            "builtins:creature_cant_spell",
             entity_name=caster.get_name()
         )
     caster.spell_book.check_spell(spell_id, caster)
@@ -167,7 +169,7 @@ def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_para
 def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameters) -> int:
     if user.get_state("builtins:can_item") is False:
         raise AbortError(
-            "creature_cant_item",
+            "builtins:creature_cant_item",
             entity_name=user.get_name()
         )
     user.inventory.check_item(item_id, user)
@@ -192,18 +194,18 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
     "user": Entity
 })
 def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
-    # check if target in radius!
     if user.get_state("builtins:can_attack") is False:
         raise AbortError(
             "builtins:creature_cant_attack",
             entity_name=user.get_name())
-    self.add_cmd(
-        "builtins:attack_usage",
-        entity_name=user.get_name()
-    )
     weapon_d: str = user.weaponry.active_weapon_id
     user.weaponry.check_weapon(weapon_d, user)
     weapon: Weapon = user.weaponry[weapon_d]
+    self.add_cmd(
+        "builtins:attack_usage",
+        entity_name=user.get_name(),
+        weapon_name=weapon.get_name()
+    )
     usage_result = self.use_hook(
         "WEAPON",
         weapon.effect_hook,
@@ -223,7 +225,7 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
 def use_defense(self: HookContext, user: Entity, **requires_parameters) -> int:
     if user.get_state("builtins:can_defend") is False:
         raise AbortError(
-            "creature_cant_defend",
+            "builtins:creature_cant_defend",
             entity_name=user.get_name()
         )
     self.add_cmd(
@@ -241,18 +243,28 @@ def use_defense(self: HookContext, user: Entity, **requires_parameters) -> int:
 def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **_) -> int:
     if user.get_state("builtins:can_change_weapon") is False:
         raise AbortError(
-            "creature_cant_change_weapon",
+            "builtins:creature_cant_change_weapon",
             entity_name=user.get_name()
         )
-    self.add_cmd(
-        "builtins:change_weapon_usage",
-        entity_name=user.get_name()
-    )
     if weapon_id not in user.weaponry:
         raise ValueError(f"Weapon with id {weapon_id} not found.")
     weapon = user.weaponry[weapon_id]
     if weapon.cost_to_switch > user.get_attribute("current_action_points"):
         raise ValueError(f"User {user.get_name()} does not have enough action points to switch to weapon {weapon_id}.")
+    previous_weapon = user.weaponry.get_active_weapon()
+    if previous_weapon is not None:
+        self.add_cmd(
+            "builtins:change_weapon_usage_with_prev",
+            entity_name=user.get_name(),
+            new_weapon=weapon.get_name(),
+            previous_weapon=previous_weapon.get_name() if previous_weapon is not None else "-"
+        )
+    else:
+        self.add_cmd(
+            "builtins:change_weapon_usage",
+            entity_name=user.get_name(),
+            new_weapon=weapon.get_name(),
+        )
     self.trigger_on_change_weapon(changed_for=user, weapon_=weapon,
                                   previous_weapon=user.weaponry.get_active_weapon())
     user.weaponry.set_active_weapon(weapon_id)
@@ -268,26 +280,33 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
                  **requires_parameters) -> int:
     if user.get_state("builtins:can_move") is False:
         raise AbortError(
-            "creature_cant_move",
+            "builtins:creature_cant_move",
             entity_name=user.get_name()
         )
     square = Square.from_str(square)
     if square is None or square.line == 0 or square.column == 0:
-        raise AbortError("No square provided")
+        raise AbortError("builtins:missing_square_movement")
     if square.line == user.square.line and square.column == user.square.column:
         return user.cost_dictionary["builtins:move"] if uses_action_points else 0
     if uses_action_points and (user.get_attribute("current_action_points") < user.cost_dictionary["builtins:move"]):
-        raise AbortError(f"User {user.get_name()} does not have enough action points to move.")
-    if self.battlefield.move_entity(user, square) == -1:
-        raise AbortError(f"User {user.get_name()} cannot move to square {square}.")
-
-    apply_status_effect(self, applied_to=user, status_effect_descriptor="builtins:moved", **requires_parameters)
-    self.trigger_on_move(square=square, moved_entity=user, moved_by=user)
+        raise AbortError(
+            "builtins:not_enough_ap_movement",
+            entity_name=user.get_name(),
+        )
     self.add_cmd(
         "builtins:movement_usage",
         entity_name=user.get_name(),
         square=str(square)
     )
+    if self.battlefield.move_entity(user, square) == -1:
+        raise AbortError(
+            f"builtins:cannot_move_to_square",
+            entity_name=user.get_name(),
+            square=str(square)
+        )
+
+    apply_status_effect(self, applied_to=user, status_effect_descriptor="builtins:moved", **requires_parameters)
+    self.trigger_on_move(square=square, moved_entity=user, moved_by=user)
     return user.cost_dictionary["builtins:move"] if uses_action_points else 0
 
 
@@ -297,7 +316,11 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
 })
 def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
     if self.battlefield.swap_entities(first, second) == -1:
-        raise AbortError(f"Entities cannot be swapped.")
+        raise AbortError(
+            f"builtins:cant_swap_squares",
+            first=str(first),
+            second=str(second)
+        )
     self.add_cmd(
         "builtins:swap_usage",
         first=str(first),
@@ -316,15 +339,15 @@ def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
     return 1
 
 
-@custom_hooks.hook(name="use_turn", schema={
+@custom_hooks.hook(name="add_spell", schema={
     "user": Entity,
     "spell_id": str,
     "silent": bool
 })
-def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = False, **_):
-    spell_preset = self.import_data(HoldTypes.SPELL, spell_id)
+def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = False, avoid_import_error: bool = True, **_):
+    spell_preset = self.import_data(HoldTypes.SPELL, spell_id, avoid_import_error=avoid_import_error)
     if spell_preset is None:
-        raise ValueError(f"Spell with id {spell_id} not found.")
+        raise ValueError(f"builtins:spell_not_found")
     spell = Spell.fromPreset(spell_preset)
     if not silent:
         self.add_cmd(
@@ -341,10 +364,10 @@ def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = Fal
     "item_id": str,
     "silent": bool
 })
-def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False, **_):
-    item_preset = self.import_data(HoldTypes.ITEM, item_id)
+def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False, avoid_import_error: bool = True, **_):
+    item_preset = self.import_data(HoldTypes.ITEM, item_id, avoid_import_error=avoid_import_error)
     if item_preset is None:
-        raise ValueError(f"Item with id {item_id} not found.")
+        raise ValueError(f"builtins:item_not_found")
     item = Item.fromPreset(item_preset)
     if not silent:
         self.add_cmd(
@@ -361,10 +384,10 @@ def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False
     "weapon_descriptor": str,
     "silent": bool
 })
-def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: bool = False, **_):
-    weapon_preset = self.import_data(HoldTypes.WEAPON, weapon_descriptor)
+def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: bool = False, avoid_import_error: bool = True, **_):
+    weapon_preset = self.import_data(HoldTypes.WEAPON, weapon_descriptor, avoid_import_error=avoid_import_error)
     if weapon_preset is None:
-        raise ValueError(f"Weapon with id {weapon_descriptor} not found.")
+        raise ValueError("builtins:weapon_not_found")
     weapon = Weapon.fromPreset(weapon_preset)
     if not silent:
         self.add_cmd(
@@ -382,8 +405,8 @@ def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: 
     "applied_by": Entity | None
 })
 def apply_status_effect(self: HookContext, applied_to: Entity, status_effect_descriptor: str,
-                        applied_by: Entity | None = None, **kwargs):
-    status_effect_preset = self.import_data(HoldTypes.STATUS_EFFECT, status_effect_descriptor)
+                        applied_by: Entity | None = None, avoid_import_error: bool = True, **kwargs):
+    status_effect_preset = self.import_data(HoldTypes.STATUS_EFFECT, status_effect_descriptor, avoid_import_error)
     if status_effect_preset is None:
         raise ValueError(f"Status effect with descriptor {status_effect_descriptor} not found.")
     status_effect = StatusEffect(**status_effect_preset)
@@ -441,11 +464,12 @@ def summon_entity(
         initiative_option: Literal["last", "first", "random", "after_summoner"] = "after_summoner",
         permanent: bool = False,
         dismiss_if_occupied: bool = False,
+        avoid_import_error: bool = True,
         **_
 ):
-    entity_preset = self.import_data(HoldTypes.ENTITY, preset_id)
+    entity_preset = self.import_data(HoldTypes.ENTITY, preset_id, avoid_import_error=avoid_import_error)
     if entity_preset is None:
-        raise AbortError(f"Entity with id {preset_id} not found.")
+        raise AbortError("builtins:no_summon_not_found_entity", entity_name=preset_id)
     entity = Entity.fromPreset(self, entity_preset)
     if self.battlefield[preferred_square.line, preferred_square.column] is not None:
         if dismiss_if_occupied:
@@ -462,7 +486,9 @@ def summon_entity(
                     break
             else:
                 raise AbortError(
-                    f"Entity with id {preset_id} cannot be summoned because there are no free squares on the field")
+                    "builtins:no_summon_not_found_free_square",
+                    entity_name=entity.get_name()
+                )
     self.battlefield.add_entity(entity, square=preferred_square)
     entity_ptr: Entity | None = self.battlefield[preferred_square.line, preferred_square.column]
     if entity_ptr is None:
@@ -517,12 +543,14 @@ def make_fortitude_roll(
     if safe_roll_result_equal_to_20 or (safe_roll_result_greater_than_barrier and not safe_roll_is_total_failure):
         self.add_cmd(
             "builtins:successful_fortitude_roll",
-            roll_type=fortitude_roll_type_name,
+            entity_name=target.get_name(),
+            roll_type=fortitude_roll_type_name
         )
         return True, safe_roll_result
     else:
         self.add_cmd(
             "builtins:failed_fortitude_roll",
+            entity_name=target.get_name(),
             roll_type=fortitude_roll_type_name,
         )
         return False, safe_roll_result
