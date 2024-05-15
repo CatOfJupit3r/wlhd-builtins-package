@@ -1,0 +1,20 @@
+{
+    "entity_error": {
+        "name": "Помилка"
+    },
+    "hero": {
+        "name": "Герой"
+    },
+    "target_dummy": {
+        "name": "Манекен"
+    },
+    "target_dummy_large": {
+        "name": "Манекен (великий)"
+    },
+    "target_dummy_small": {
+        "name": "Манекен (маленький)"
+    },
+    "invisible_demon": {
+        "name": "Невидимий демон"
+    }
+}

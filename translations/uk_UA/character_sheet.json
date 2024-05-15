@@ -1,7 +1,0 @@
-{
-    "creature_and_line": "Створіння {0} ({1}/{2})",
-    "health_max_health": "Здоров'я: {0}/{1}",
-    "action_points": "Очки дії: {0}/{1}",
-    "armor": "Броня: {0}/{1}",
-    "status_effects": "Статус ефекти: {0}"
-}

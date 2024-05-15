@@ -1,0 +1,12 @@
+{
+    "creature_cant_attack": "{{entity_name}} не може атакувати!",
+    "creature_cant_move": "{{entity_name}} не може переміщуватися!",
+    "creature_cant_spell": "{{entity_name}} не може використовувати закляття!",
+    "creature_cant_item": "{{entity_name}} не може використовувати предмети!",
+    "creature_cant_defend": "{{entity_name}} не може захищатися!",
+    "creature_cant_change_weapon": "{{entity_name}} не може змінити зброю!",
+    "invalid_action_descriptor": "Недійсний дескриптор дії: {{descriptor}}!",
+    "error_executing_action": "Помилка виконання дії: {{action}}! {{reason}}",
+    "invalid_input": "Недійсний ввід!",
+    "corrupted_input": "Пошкоджений ввід!"
+}

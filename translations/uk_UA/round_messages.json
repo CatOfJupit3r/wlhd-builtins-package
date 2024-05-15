@@ -1,14 +1,14 @@
 {
-    "your_turn": "Твій хід! Ти керуєш \"{0}\" ({1}/{2}). ОД: {3}/{4}.",
+    "your_turn": "Твій хід! Ти керуєш \"{{entity_name}\" ({{line}}/{{column}}). ОД: {{current_action_points}}/{{max_action_points}}.",
     "win": "Перемога!",
     "lose": "Поразка!",
     "draw": "Нічия!",
     "current_battlefield": "Поточне поле бою:",
     "turn_log": "Журнал поточного ходу: ",
     "game_log": "Журнал гри:",
-    "turn_message": "Хід {0}!",
+    "turn_message": "Хід {{round_count}!",
     "game_started": "Гра розпочалася!",
-    "game_finished": "Гра завершилася! Результат: {0}",
+    "game_finished": "Гра завершилася! Результат: {{game_result}",
     "game_finished_with_error": "Гра завершилася з помилкою!",
     "timeout": "Час вийшов!"
 }
