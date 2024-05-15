@@ -148,7 +148,7 @@ def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_para
     spell: Spell = caster.spell_book[spell_id]
     spell.current_consecutive_uses += 1
     if spell.max_consecutive_uses is not None and spell.current_consecutive_uses >= spell.max_consecutive_uses:
-        spell.turns_until_usage = spell.cooldown_value
+        spell.turns_until_usage = spell.cooldown_value or 0
         spell.current_consecutive_uses = 0
     self.add_cmd(
         "builtins:spell_usage",
@@ -176,7 +176,7 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
     item = user.inventory[item_id]
     item.current_consecutive_uses += 1
     if item.max_consecutive_uses is not None and item.current_consecutive_uses >= item.max_consecutive_uses:
-        item.turns_until_usage = item.cooldown_value
+        item.turns_until_usage = item.cooldown_value or 0
         item.current_consecutive_uses = 0
     self.add_cmd(
         "builtins:item_usage",
@@ -201,6 +201,10 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
     weapon_d: str = user.weaponry.active_weapon_id
     user.weaponry.check_weapon(weapon_d, user)
     weapon: Weapon = user.weaponry[weapon_d]
+    weapon.current_consecutive_uses += 1
+    if weapon.max_consecutive_uses is not None and weapon.current_consecutive_uses >= weapon.max_consecutive_uses:
+        weapon.turns_until_usage = weapon.cooldown_value or 0
+        weapon.current_consecutive_uses = 0
     self.add_cmd(
         "builtins:attack_usage",
         entity_name=user.get_name(),

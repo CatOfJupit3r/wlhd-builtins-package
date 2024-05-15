@@ -25,7 +25,7 @@
             "sprite": "builtins:status_effect",
             "description": "builtins:fainted.desc"
         },
-        "duration": 1,
+        "duration": null,
         "static": false,
         "visibility": true,
         "activate_on_use": true,
