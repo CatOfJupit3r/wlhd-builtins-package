@@ -1,6 +1,6 @@
 {
-    "title": "builtins",
-    "description": "DO NOT DELETE",
+    "title": "Built-in Package",
+    "description": "Basic package of built-in functions for Walenholde. Without this package, you game server WON'T work. Seriously, they won't, don't even try to.",
     "descriptor": "builtins",
     "author": "CatOfJupit3r",
     "version": "0.0.1",
