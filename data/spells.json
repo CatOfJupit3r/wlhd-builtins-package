@@ -1,6 +1,11 @@
 {
     "spell_error": {
-        "cost": 0,
+        "decorations": {
+            "name": "builtins:spell_error.name",
+            "sprite": "builtins:pyromancy",
+            "description": "builtins:spell_error.desc"
+        },
+        "usage_cost": 0,
         "requirements": {
             "requires": {
                 "square": "Square"
@@ -33,7 +38,12 @@
         "school": "builtins:pyromancy"
     },
     "fireball": {
-        "cost": 0,
+        "decorations": {
+            "name": "builtins:fireball.name",
+            "sprite": "builtins:pyromancy",
+            "description": "builtins:fireball.desc"
+        },
+        "usage_cost": 0,
         "requirements": {
             "requires": {
                 "square": "Square"
