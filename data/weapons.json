@@ -37,6 +37,7 @@
                 }
             }
         },
+        "consecutive_use_reset_on_cooldown_update": true,
         "cost_to_switch": 1
     },
     "sword": {
@@ -81,6 +82,7 @@
                 }
             }
         },
+        "consecutive_use_reset_on_cooldown_update": true,
         "cost_to_switch": 1
     },
     "hero_sword": {
@@ -125,6 +127,7 @@
                 }
             }
         },
+        "consecutive_use_reset_on_cooldown_update": true,
         "cost_to_switch": 1
     }
 }

@@ -36,7 +36,8 @@
                     "exclude_inner_requires": null
                 }
             }
-        }
+        },
+        "consecutive_use_reset_on_cooldown_update": true
     },
     "healing_potion": {
         "decorations": {
@@ -80,6 +81,7 @@
                     "exclude_inner_requires": null
                 }
             }
-        }
+        },
+        "consecutive_use_reset_on_cooldown_update": true
     }
 }
