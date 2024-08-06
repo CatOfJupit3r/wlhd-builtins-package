@@ -6,7 +6,7 @@ from installed.builtins.declarations.weapons import hero_sword
 from models.decorations import Decoration
 
 entity_error = Entity(
-    "builtins:error",
+    "builtins:entity_error",
     Decoration("builtins:error.name", "builtins:error", "builtins:error.desc"),
     None,
     {
@@ -37,7 +37,10 @@ hero = Entity(
         "builtins:physical_attack": 10,
         "builtins:physical_defense": 10,
     },
-
+    spell_book={
+        "spells": [],
+        "max_active_spells": 3,
+    }
 )
 
 hero.weaponry.add_weapon(hero_sword)
@@ -68,7 +71,6 @@ target_dummy = Entity(
 
 target_dummy.inventory.add_item(Item(**healing_potion.toJson()))
 
-
 target_dummy_large = Entity.fromJson(target_dummy.toJson(optimize=True))
 
 target_dummy_large.attributes["builtins:current_health"] = -1
@@ -76,4 +78,3 @@ target_dummy_large.attributes["builtins:max_health"] = 250
 target_dummy_large.attributes["builtins:base_armor"] = 100
 target_dummy_large.attributes["builtins:physical_attack"] = 20
 target_dummy_large.attributes["builtins:physical_defense"] = 10
-

@@ -260,14 +260,14 @@ def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **_) -> i
         self.add_cmd(
             "builtins:change_weapon_usage_with_prev",
             entity_name=user.get_name(),
-            new_weapon=weapon.get_name(),
-            previous_weapon=previous_weapon.get_name() if previous_weapon is not None else "-"
+            weapon_name=weapon.get_name(),
+            previous_weapon_name=previous_weapon.get_name() if previous_weapon is not None else "-"
         )
     else:
         self.add_cmd(
             "builtins:change_weapon_usage",
             entity_name=user.get_name(),
-            new_weapon=weapon.get_name(),
+            weapon_name=weapon.get_name(),
         )
     self.trigger_on_change_weapon(changed_for=user, weapon_=weapon,
                                   previous_weapon=user.weaponry.get_active_weapon())
@@ -304,7 +304,7 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
     )
     if self.battlefield.move_entity(user, square) == -1:
         raise AbortError(
-            f"builtins:cannot_move_to_square",
+            "builtins:cannot_move_to_square",
             entity_name=user.get_name(),
             square=str(square)
         )
@@ -321,7 +321,7 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
 def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
     if self.battlefield.swap_entities(first, second) == -1:
         raise AbortError(
-            f"builtins:cant_swap_squares",
+            "builtins:cant_swap_squares",
             first=str(first),
             second=str(second)
         )
@@ -351,7 +351,7 @@ def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
 def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = False, avoid_import_error: bool = True, **_):
     spell_preset = self.import_data(HoldTypes.SPELL, spell_id, avoid_import_error=avoid_import_error)
     if spell_preset is None:
-        raise ValueError(f"builtins:spell_not_found")
+        raise ValueError("builtins:spell_not_found")
     spell = Spell.fromPreset(spell_preset)
     if not silent:
         self.add_cmd(
@@ -371,7 +371,7 @@ def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = Fal
 def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False, avoid_import_error: bool = True, **_):
     item_preset = self.import_data(HoldTypes.ITEM, item_id, avoid_import_error=avoid_import_error)
     if item_preset is None:
-        raise ValueError(f"builtins:item_not_found")
+        raise ValueError("builtins:item_not_found")
     item = Item.fromPreset(item_preset)
     if not silent:
         self.add_cmd(
