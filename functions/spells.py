@@ -13,21 +13,21 @@ custom_hooks = SpellHooks()
 def hp_change_spell(self: HookContext, spell: Spell, caster: Entity, square: str, **_) -> None:
     square = Square.from_str(square)
     target = self.battlefield.get_entity(square)
-    if spell.method_variables['time_thrown_dice'] is not None:
-        damage_dice_roll = Dice(spell.method_variables['time_thrown_dice'],
-                                spell.method_variables['sides_of_dice'])
+    if spell.memory['time_thrown_dice'] is not None:
+        damage_dice_roll = Dice(spell.memory['time_thrown_dice'],
+                                spell.memory['sides_of_dice'])
         if caster is not None:
             damage = damage_dice_roll.roll(
-                caster.get_attribute(spell.method_variables['element_of_hp_change'] + '_attack'))
+                caster.get_attribute(spell.memory['element_of_hp_change'] + '_attack'))
         else:
             damage = damage_dice_roll.roll()
     else:  # if it is a value, then we take it
-        damage = spell.method_variables['value']
-    if spell.method_variables.get('type_of_hp_change') is None:
+        damage = spell.memory['value']
+    if spell.memory.get('type_of_hp_change') is None:
         raise AbortError("Type of hp change is not defined")
     hp_change = HpChange(damage,
-                         spell.method_variables['type_of_hp_change'],
-                         spell.method_variables['element_of_hp_change'],
+                         spell.memory['type_of_hp_change'],
+                         spell.memory['element_of_hp_change'],
                          source="spell")
     target.process_hp_change(
         self, hp_change, caster

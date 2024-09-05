@@ -291,8 +291,8 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
     if square is None or square.line == 0 or square.column == 0:
         raise AbortError("builtins:missing_square_movement")
     if square.line == user.square.line and square.column == user.square.column:
-        return user.cost_dictionary["builtins:move"] if uses_action_points else 0
-    if uses_action_points and (user.get_attribute("current_action_points") < user.cost_dictionary["builtins:move"]):
+        return user.added_action_costs["builtins:move"] if uses_action_points else 0
+    if uses_action_points and (user.get_attribute("current_action_points") < user.added_action_costs["builtins:move"]):
         raise AbortError(
             "builtins:not_enough_ap_movement",
             entity_name=user.get_name(),
@@ -311,7 +311,7 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
 
     apply_status_effect(self, applied_to=user, status_effect_descriptor="builtins:moved", **requires_parameters)
     self.trigger_on_move(square=square, moved_entity=user, moved_by=user)
-    return user.cost_dictionary["builtins:move"] if uses_action_points else 0
+    return user.added_action_costs["builtins:move"] if uses_action_points else 0
 
 
 @custom_hooks.hook(name="use_swap", schema={
@@ -348,7 +348,8 @@ def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
     "spell_id": str,
     "silent": bool
 })
-def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = False, avoid_import_error: bool = True, **_):
+def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = False, avoid_import_error: bool = True,
+              **_):
     spell_preset = self.import_data(HoldTypes.SPELL, spell_id, avoid_import_error=avoid_import_error)
     if spell_preset is None:
         raise ValueError("builtins:spell_not_found")
@@ -388,7 +389,8 @@ def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False
     "weapon_descriptor": str,
     "silent": bool
 })
-def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: bool = False, avoid_import_error: bool = True, **_):
+def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: bool = False,
+               avoid_import_error: bool = True, **_):
     weapon_preset = self.import_data(HoldTypes.WEAPON, weapon_descriptor, avoid_import_error=avoid_import_error)
     if weapon_preset is None:
         raise ValueError("builtins:weapon_not_found")
@@ -474,7 +476,7 @@ def summon_entity(
     entity_preset = self.import_data(HoldTypes.ENTITY, preset_id, avoid_import_error=avoid_import_error)
     if entity_preset is None:
         raise AbortError("builtins:no_summon_not_found_entity", entity_name=preset_id)
-    entity = Entity.fromPreset(self, entity_preset)
+    entity = Entity('builtins:something_something')
     if self.battlefield[preferred_square.line, preferred_square.column] is not None:
         if dismiss_if_occupied:
             return None
