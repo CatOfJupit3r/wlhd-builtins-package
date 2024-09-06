@@ -12,11 +12,11 @@ item_error = ItemGameComponent(
     {
         "decorations": Decoration("builtins:error.name", "builtins:error", "builtins:error.desc"),
         "quantity": 1,
-        "turns_until_usage": 0,
-        "current_consecutive_uses": 0,
-        'effect_hook': 'builtins:item_effect_template',
-        'is_consumable': False,
-        'requirements': RequiresTemplates.ANY_SQUARE.toJson(),
+        "turnsUntilUsage": 0,
+        "currentConsecutiveUses": 0,
+        'effectHook': 'builtins:item_effect_template',
+        'isConsumable': False,
+        'requirements': RequiresTemplates.ANY_SQUARE,
     }
 )
 
@@ -26,13 +26,13 @@ healing_potion = ItemGameComponent(
         "decorations": Decoration("builtins:healing_potion.name", "builtins:healing_potion",
                                   "builtins:healing_potion.desc"),
         "quantity": 1,
-        "turns_until_usage": 0,
-        "current_consecutive_uses": 0,
-        'effect_hook': 'builtins:hp_change_item',
-        'is_consumable': True,
-        'usage_cost': 1,
-        'caster_must_be_in_range': Ranges.ALL,
-        'requirements': RequiresTemplates.ANY_SQUARE.toJson(),
+        "turnsUntilUsage": 0,
+        "currentConsecutiveUses": 0,
+        'effectHook': 'builtins:hp_change_item',
+        'isConsumable': True,
+        'usageCost': 1,
+        'casterMustBeInRange': Ranges.ALL,
+        'requirements': RequiresTemplates.ANY_SQUARE,
         'tags': ['builtins:healing', 'builtins:physical'],
     }
 ).with_memory(

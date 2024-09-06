@@ -1,81 +1,77 @@
 {
-    "spell_error": {
-        "decorations": {
-            "name": "builtins:spell_error.name",
-            "sprite": "builtins:pyromancy",
-            "description": "builtins:spell_error.desc"
-        },
-        "usage_cost": 0,
-        "requirements": {
-            "requires": {
-                "square": "Square"
-            },
-            "restrictions": {
-                "square": {
-                    "only_side": null,
-                    "only_lines": null,
-                    "only_columns": null,
-                    "everything_except": null,
-                    "only_descriptor": null,
-                    "only_empty": null,
-                    "exclude_inner_requires": null
-                }
-            }
-        },
-        "caster_must_be_in_range": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6
-        ],
-        "cooldown": 999,
-        "max_consecutive_uses": null,
-        "consecutive_uses_reset_on_cooldown_update": true,
-        "effect_hook": "builtins:spell_effect_template",
-        "method_variables": {},
-        "school": "builtins:pyromancy"
-    },
     "fireball": {
         "decorations": {
-            "name": "builtins:fireball.name",
+            "name": "builtins:fireball",
             "sprite": "builtins:pyromancy",
             "description": "builtins:fireball.desc"
         },
-        "usage_cost": 0,
-        "requirements": {
-            "requires": {
-                "square": "Square"
-            },
-            "restrictions": {
-                "square": {
-                    "only_side": null,
-                    "only_lines": null,
-                    "only_columns": null,
-                    "everything_except": null,
-                    "only_descriptor": null,
-                    "only_empty": null,
-                    "exclude_inner_requires": null
-                }
-            }
+        "usageCost": 1,
+        "cooldown": {
+            "current": 0,
+            "max": 0
         },
-        "caster_must_be_in_range": [
+        "uses": {
+            "current": 0,
+            "max": 1
+        },
+        "consecutiveUseResetOnCooldownUpdate": true,
+        "casterMustBeInRange": [
             2,
             3,
             4,
             5
         ],
-        "cooldown": null,
-        "max_consecutive_uses": 1,
-        "consecutive_uses_reset_on_cooldown_update": true,
-        "effect_hook": "builtins:hp_change_spell",
-        "method_variables": {
-            "time_thrown_dice": 3,
-            "sides_of_dice": 8,
-            "type_of_hp_change": "damage",
-            "element_of_hp_change": "builtins:fire"
+        "memory": {
+            "dice": {
+                "type": "dice",
+                "value": {
+                    "sides": 3,
+                    "amount": 8
+                },
+                "display_name": "builtins:fireball.dice",
+                "internal": false
+            },
+            "type_of_hp_change": {
+                "type": "string",
+                "value": "damage",
+                "display_name": "builtins:type_of_hp_change",
+                "internal": false
+            },
+            "element_of_hp_change": {
+                "type": "string",
+                "value": "builtins:fire",
+                "display_name": "builtins:element_of_hp_change",
+                "internal": false
+            }
         },
-        "school": "builtins:pyromancy"
+        "requirements": {
+            "requires": {
+                "square": "Square"
+            }
+        },
+        "tags": [
+            "builtins:pyromancy"
+        ]
+    },
+    "spell_error": {
+        "decorations": {
+            "name": "builtins:spell_error",
+            "sprite": "builtins:spell_error",
+            "description": "builtins:spell_error.desc"
+        },
+        "usageCost": 999,
+        "cooldown": {
+            "current": 0,
+            "max": 999
+        },
+        "uses": {
+            "current": 0,
+            "max": 0
+        },
+        "consecutiveUseResetOnCooldownUpdate": false,
+        "casterMustBeInRange": false,
+        "memory": null,
+        "requirements": null,
+        "tags": []
     }
 }

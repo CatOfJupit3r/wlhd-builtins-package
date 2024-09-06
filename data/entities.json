@@ -1,74 +1,95 @@
 {
+    "entity_error": {
+        "decorations": {
+            "name": "builtins:error.name",
+            "sprite": "builtins:error",
+            "description": "builtins:error.desc"
+        },
+        "attributes": {
+            "builtins:current_health": -1,
+            "builtins:max_health": 1,
+            "builtins:max_action_points": 1
+        },
+        "spellBook": {
+            "knownSpells": [],
+            "maxActiveSpells": 0
+        },
+        "statusEffects": {},
+        "inventory": {},
+        "weaponry": {},
+        "states": {
+            "builtins:can_act": -1,
+            "builtins:alive": -1
+        },
+        "addedCosts": {},
+        "tags": [],
+        "memory": {}
+    },
     "hero": {
         "decorations": {
             "name": "builtins:hero.name",
             "sprite": "builtins:hero",
             "description": "builtins:hero.desc"
         },
-        "race_of_creature": "humanoid",
         "attributes": {
-            "builtins:current_health": 100,
+            "builtins:current_health": -1,
             "builtins:max_health": 100,
             "builtins:max_action_points": 10,
             "builtins:base_armor": 50,
             "builtins:physical_attack": 10,
             "builtins:physical_defense": 10
         },
-        "spell_book": {
-            "spells": [
+        "spellBook": {
+            "knownSpells": [
                 {
                     "descriptor": "builtins:fireball",
-                    "turns_until_usage": 0,
-                    "current_consecutive_uses": 0,
-                    "_is_active": true
+                    "isActive": true,
+                    "memory": {
+                        "linked_item_id": {
+                            "type": "component_id",
+                            "value": "1",
+                            "display_name": "builtins:linked_item_id",
+                            "internal": false
+                        },
+                        "dice": {
+                            "type": "dice",
+                            "value": {
+                                "sides": 1,
+                                "amount": 6
+                            },
+                            "display_name": "builtins:fireball.dice",
+                            "internal": false
+                        }
+                    }
                 }
             ],
-            "max_active_spells": 4
+            "maxActiveSpells": 12
         },
-        "status_effects": [],
+        "statusEffects": {},
         "inventory": [
             {
                 "descriptor": "builtins:healing_potion",
-                "quantity": 1
-            },
-            {
-                "descriptor": "builtins:healing_potion",
-                "quantity": 1
-            },
-            {
-                "descriptor": "builtins:healing_potion",
-                "quantity": 1
-            },
-            {
-                "descriptor": "builtins:healing_potion",
-                "quantity": 1
+                "quantity": 5,
+                "turns_until_usage": 0,
+                "current_consecutive_uses": 0,
+                "id_": "1"
             }
         ],
         "weaponry": [
             {
                 "descriptor": "builtins:hero_sword",
-                "is_active": false,
-                "quantity": 1
+                "quantity": 1,
+                "turnsUntilUsage": 0,
+                "currentConsecutiveUses": 0,
+                "isActive": true
             }
         ],
-        "states": {
-            "builtins:can_move": 1,
-            "builtins:can_act": 1,
-            "builtins:can_attack": 1,
-            "builtins:can_change_weapon": 1,
-            "builtins:can_spell": 1,
-            "builtins:can_item": 1,
-            "builtins:damageable": 1,
-            "builtins:visible": 1,
-            "builtins:adrenaline": 0,
-            "builtins:alive": 1
-        },
-        "cost_dictionary": {
-            "builtins:move": 1,
-            "builtins:spell": 1,
-            "builtins:use": 1,
-            "builtins:pass": 0
-        }
+        "states": {},
+        "addedCosts": {},
+        "tags": [
+            "builtins:humanoid"
+        ],
+        "memory": {}
     },
     "target_dummy": {
         "decorations": {
@@ -76,82 +97,66 @@
             "sprite": "builtins:target_dummy",
             "description": "builtins:target_dummy.desc"
         },
-        "race_of_creature": "mechanoid",
         "attributes": {
-            "builtins:current_health": 250,
+            "builtins:current_health": -1,
+            "builtins:max_health": 100,
+            "builtins:max_action_points": 10,
+            "builtins:base_armor": 50,
+            "builtins:physical_attack": 10,
+            "builtins:physical_defense": 5
+        },
+        "spellBook": {
+            "knownSpells": [],
+            "maxActiveSpells": 0
+        },
+        "statusEffects": {},
+        "inventory": [
+            {
+                "descriptor": "builtins:healing_potion",
+                "quantity": 5,
+                "turns_until_usage": 0,
+                "current_consecutive_uses": 0
+            }
+        ],
+        "weaponry": {},
+        "states": {},
+        "addedCosts": {},
+        "tags": [
+            "builtins:mechanoid"
+        ],
+        "memory": {}
+    },
+    "target_dummy_large": {
+        "decorations": {
+            "name": "builtins:target_dummy.name",
+            "sprite": "builtins:target_dummy",
+            "description": "builtins:target_dummy.desc"
+        },
+        "attributes": {
+            "builtins:current_health": -1,
             "builtins:max_health": 250,
             "builtins:max_action_points": 10,
             "builtins:base_armor": 100,
             "builtins:physical_attack": 20,
             "builtins:physical_defense": 10
         },
-        "spell_book": {
-            "spells": [],
-            "max_active_spells": 0
+        "spellBook": {
+            "knownSpells": [],
+            "maxActiveSpells": 0
         },
-        "status_effects": [],
+        "statusEffects": {},
         "inventory": [
             {
                 "descriptor": "builtins:healing_potion",
-                "quantity": 1
+                "quantity": 5
             }
         ],
-        "weaponry": [],
-        "states": {
-            "builtins:can_move": 1,
-            "builtins:can_act": 1,
-            "builtins:can_attack": 1,
-            "builtins:can_change_weapon": 1,
-            "builtins:can_spell": 1,
-            "builtins:can_item": 1,
-            "builtins:damageable": 1,
-            "builtins:visible": 1,
-            "builtins:adrenaline": 0,
-            "builtins:alive": 1
-        },
-        "cost_dictionary": {
-            "builtins:move": 1,
-            "builtins:spell": 1,
-            "builtins:use": 1,
-            "builtins:pass": 0
-        }
-    },
-    "entity_error": {
-        "decorations": {
-            "name": "builtins:error.name",
-            "sprite": "builtins:error",
-            "description": "builtins:error.desc"
-        },
-        "race_of_creature": "mechanoid",
-        "attributes": {
-            "builtins:current_health": 1,
-            "builtins:max_health": 1,
-            "builtins:max_action_points": 1
-        },
-        "spell_book": {
-            "spells": [],
-            "max_active_spells": 0
-        },
-        "status_effects": [],
-        "inventory": [],
-        "weaponry": [],
-        "states": {
-            "builtins:can_move": 1,
-                "builtins:can_act": 0,
-            "builtins:can_attack": 1,
-            "builtins:can_change_weapon": 1,
-            "builtins:can_spell": 1,
-            "builtins:can_item": 1,
-            "builtins:damageable": 1,
-            "builtins:visible": 1,
-            "builtins:adrenaline": 0,
-            "builtins:alive": 0
-        },
-        "cost_dictionary": {
-            "builtins:move": 1,
-            "builtins:spell": 1,
-            "builtins:use": 1,
-            "builtins:pass": 0
-        }
+        "weaponry": {},
+        "states": {},
+        "addedCosts": {},
+        "tags": [
+            "builtins:mechanoid"
+        ],
+        "memory": {}
     }
 }

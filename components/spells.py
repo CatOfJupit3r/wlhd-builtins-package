@@ -12,9 +12,9 @@ spell_error = SpellGameComponent(
     {
         "decorations": Decoration(name="builtins:spell_error", sprite="builtins:spell_error",
                                   description="builtins:spell_error.desc"),
-        "usage_cost": 999,
-        "cooldown_value": 999,
-        "effect_hook": "builtins:default_spell_hook",
+        "usageCost": 999,
+        "cooldownValue": 999,
+        "effectHook": "builtins:default_spell_hook",
     },
 )
 
@@ -23,13 +23,13 @@ fireball = SpellGameComponent(
     {
         "decorations": Decoration(name="builtins:fireball", sprite="builtins:pyromancy",
                                   description="builtins:fireball.desc"),
-        "usage_cost": 1,
-        "caster_must_be_in_range": Ranges.ALL_EXCEPT_SAFE,
-        "cooldown_value": 0,
-        "requirements": RequiresTemplates.ANY_SQUARE.toJson(),
-        "max_consecutive_uses": 1,
-        "consecutive_uses_reset_on_cooldown_update": True,
-        "effect_hook": "builtins:hp_change_spell",
+        "usageCost": 1,
+        "casterMustBeInRange": Ranges.ALL_EXCEPT_SAFE,
+        "cooldownValue": 0,
+        "requirements": RequiresTemplates.ANY_SQUARE,
+        "maxConsecutiveUses": 1,
+        "consecutiveUsesResetOnCooldownUpdate": True,
+        "effectHook": "builtins:hp_change_spell",
         "tags": ["builtins:pyromancy"],
     },
 ).with_memory(

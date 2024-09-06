@@ -1,133 +1,157 @@
 {
     "weapon_error": {
         "decorations": {
-            "name": "builtins:weapon_error.name",
-            "sprite": "builtins:weapon",
+            "name": "builtins:weapon_error",
+            "sprite": "builtins:weapon_error",
             "description": "builtins:weapon_error.desc"
         },
-        "usage_cost": 0,
-        "cooldown": 0,
-        "is_consumable": false,
+        "usageCost": 0,
+        "cooldown": {
+            "current": 0,
+            "max": 0
+        },
+        "uses": {
+            "current": 0,
+            "max": 0
+        },
+        "consecutiveUseResetOnCooldownUpdate": false,
+        "isConsumable": false,
         "quantity": 1,
-        "caster_must_be_in_range": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6
-        ],
-        "max_consecutive_uses": null,
-        "method_variables": {},
-        "applies": [],
-        "effect_hook": "builtins:dummy_weapon",
+        "casterMustBeInRange": false,
+        "memory": null,
+        "applies": {},
         "requirements": {
             "requires": {
                 "square": "Square"
-            },
-            "restrictions": {
-                "square": {
-                    "only_side": null,
-                    "only_lines": null,
-                    "only_columns": null,
-                    "everything_except": null,
-                    "only_descriptor": null,
-                    "only_empty": null,
-                    "exclude_inner_requires": null
-                }
             }
         },
-        "consecutive_use_reset_on_cooldown_update": true,
-        "cost_to_switch": 1
+        "tags": [],
+        "costToSwitch": 999
     },
-    "sword": {
+    "regular_sword": {
         "decorations": {
-            "name": "builtins:sword.name",
-            "sprite": "builtins:weapon",
+            "name": "builtins:sword",
+            "sprite": "builtins:sword",
             "description": "builtins:sword.desc"
         },
-        "usage_cost": 1,
-        "cooldown": 0,
-        "is_consumable": false,
+        "usageCost": 1,
+        "cooldown": {
+            "current": 0,
+            "max": 0
+        },
+        "uses": {
+            "current": 0,
+            "max": 0
+        },
+        "consecutiveUseResetOnCooldownUpdate": false,
+        "isConsumable": false,
         "quantity": 1,
-        "caster_must_be_in_range": [
+        "casterMustBeInRange": [
             3,
             4
         ],
-        "max_consecutive_uses": null,
-        "method_variables": {
-            "time_thrown_dice": 1,
-            "sides_of_dice": 6,
-            "type_of_hp_change": "damage",
-            "element_of_hp_change": "builtins:physical"
+        "memory": {
+            "dice": {
+                "type": "dice",
+                "value": {
+                    "sides": 1,
+                    "amount": 6
+                },
+                "display_name": "builtins:dice",
+                "internal": false
+            },
+            "type_of_hp_change": {
+                "type": "string",
+                "value": "damage",
+                "display_name": "builtins:type_of_hp_change",
+                "internal": false
+            },
+            "element_of_hp_change": {
+                "type": "string",
+                "value": "builtins:physical",
+                "display_name": "builtins:element_of_hp_change",
+                "internal": false
+            }
         },
-        "applies": [],
-        "effect_hook": "builtins:hp_change_weapon",
+        "applies": {},
         "requirements": {
             "requires": {
                 "square": "Square"
             },
             "restrictions": {
                 "square": {
-                    "only_side": null,
                     "only_lines": [
                         3,
                         4
-                    ],
-                    "only_columns": null,
-                    "everything_except": null,
-                    "only_descriptor": null,
-                    "only_empty": null,
-                    "exclude_inner_requires": null
+                    ]
                 }
             }
         },
-        "consecutive_use_reset_on_cooldown_update": true,
-        "cost_to_switch": 1
+        "tags": [],
+        "costToSwitch": 1
     },
     "hero_sword": {
         "decorations": {
-            "name": "builtins:hero_sword.name",
-            "sprite": "builtins:weapon",
-            "description": "builtins:hero_sword.desc"
+            "name": "builtins:sword",
+            "sprite": "builtins:sword",
+            "description": "builtins:sword.desc"
         },
-        "usage_cost": 1,
-        "cooldown": 0,
-        "is_consumable": false,
+        "usageCost": 1,
+        "cooldown": {
+            "current": 0,
+            "max": 0
+        },
+        "uses": {
+            "current": 0,
+            "max": 0
+        },
+        "consecutiveUseResetOnCooldownUpdate": false,
+        "isConsumable": false,
         "quantity": 1,
-        "caster_must_be_in_range": [
+        "casterMustBeInRange": [
             3,
             4
         ],
-        "max_consecutive_uses": null,
-        "method_variables": {
-            "time_thrown_dice": 3,
-            "sides_of_dice": 8,
-            "type_of_hp_change": "damage",
-            "element_of_hp_change": "builtins:fire"
+        "memory": {
+            "dice": {
+                "type": "dice",
+                "value": {
+                    "sides": 3,
+                    "amount": 8
+                },
+                "display_name": "builtins:dice",
+                "internal": false
+            },
+            "type_of_hp_change": {
+                "type": "string",
+                "value": "damage",
+                "display_name": "builtins:type_of_hp_change",
+                "internal": false
+            },
+            "element_of_hp_change": {
+                "type": "string",
+                "value": "builtins:fire",
+                "display_name": "builtins:element_of_hp_change",
+                "internal": false
+            }
         },
-        "applies": [],
-        "effect_hook": "builtins:hp_change_weapon",
+        "applies": {},
         "requirements": {
             "requires": {
                 "square": "Square"
             },
             "restrictions": {
                 "square": {
-                    "only_side": null,
                     "only_lines": [
                         3,
                         4
-                    ],
-                    "only_columns": null,
-                    "everything_except": null,
-                    "only_descriptor": null,
-                    "only_empty": null,
-                    "exclude_inner_requires": null
+                    ]
                 }
             }
         },
-        "consecutive_use_reset_on_cooldown_update": true,
-        "cost_to_switch": 1
+        "tags": [
+            "builtins:fire"
+        ],
+        "costToSwitch": 1
     }
 }

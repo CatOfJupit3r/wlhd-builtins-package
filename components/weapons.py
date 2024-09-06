@@ -12,12 +12,12 @@ weapon_error = WeaponGameComponent(
     {
         "decorations": Decoration("builtins:weapon_error", "builtins:weapon_error", "builtins:weapon_error.desc"),
         "quantity": 1,
-        "usage_cost": 0,
-        "cooldown_value": 0,
-        "cost_to_switch": 999,
-        'effect_hook': 'builtins:item_effect_template',
-        'is_consumable': False,
-        'requirements': RequiresTemplates.ANY_SQUARE.toJson()
+        "usageCost": 0,
+        "cooldownValue": 0,
+        "costToSwitch": 999,
+        'effectHook': 'builtins:item_effect_template',
+        'isConsumable': False,
+        'requirements': RequiresTemplates.ANY_SQUARE
     }
 )
 
@@ -26,13 +26,13 @@ regular_sword = WeaponGameComponent(
     {
         "decorations": Decoration("builtins:sword", "builtins:sword", "builtins:sword.desc"),
         "quantity": 1,
-        "usage_cost": 1,
-        "cooldown_value": 0,
-        "cost_to_switch": 1,
-        'effect_hook': 'builtins:hp_change_weapon',
-        'is_consumable': False,
-        'caster_must_be_in_range': Ranges.MELEE,
-        'requirements': RequiresTemplates.ANY_MELEE.toJson()
+        "usageCost": 1,
+        "cooldownValue": 0,
+        "costToSwitch": 1,
+        'effectHook': 'builtins:hp_change_weapon',
+        'isConsumable': False,
+        'casterMustBeInRange': Ranges.MELEE,
+        'requirements': RequiresTemplates.ANY_MELEE
     }
 ).with_memory(
     dice=MemoryFactory.dice(1, 6, "builtins:dice", False),
@@ -46,13 +46,13 @@ hero_sword = WeaponGameComponent(
     {
         "decorations": Decoration("builtins:sword", "builtins:sword", "builtins:sword.desc"),
         "quantity": 1,
-        "usage_cost": 1,
-        "cooldown_value": 0,
-        "cost_to_switch": 1,
-        'effect_hook': 'builtins:hp_change_weapon',
-        'is_consumable': False,
-        'caster_must_be_in_range': Ranges.MELEE,
-        'requirements': RequiresTemplates.ANY_MELEE.toJson(),
+        "usageCost": 1,
+        "cooldownValue": 0,
+        "costToSwitch": 1,
+        'effectHook': 'builtins:hp_change_weapon',
+        'isConsumable': False,
+        'casterMustBeInRange': Ranges.MELEE,
+        'requirements': RequiresTemplates.ANY_MELEE,
         'tags': ['builtins:fire'],
     }
 ).with_memory(

@@ -33,23 +33,23 @@ hero = EntityGameComponent(
             "builtins:physical_attack": 10,
             "builtins:physical_defense": 10,
         },
-        "spell_book": {
-            "known_spells": [{
+        "spellBook": {
+            "knownSpells": [{
                 "descriptor": "builtins:fireball",
-                "is_active": True,
+                "isActive": True,
                 "memory": {
                     "linked_item_id": MemoryFactory.component_id("1", "builtins:linked_item_id"),
                     "dice": MemoryFactory.dice(1, 6, "builtins:fireball.dice", False),
                 }
             }],
-            "max_active_spells": 12,
+            "maxActiveSpells": 12,
         },
         "weaponry": [{
             "descriptor": "builtins:hero_sword",
             "quantity": 1,
-            "turns_until_usage": 0,
-            "current_consecutive_uses": 0,
-            "is_active": True,
+            "turnsUntilUsage": 0,
+            "currentConsecutiveUses": 0,
+            "isActive": True,
         }],
         "inventory": [{
             "descriptor": "builtins:healing_potion",

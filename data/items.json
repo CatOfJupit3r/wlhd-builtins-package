@@ -1,55 +1,23 @@
 {
-    "item_error": {
-        "decorations": {
-            "name": "builtins:error.name",
-            "sprite": "builtins:item",
-            "description": "builtins:error.desc"
-        },
-        "usage_cost": 1,
-        "cooldown": 999,
-        "is_consumable": false,
-        "quantity": 1,
-        "caster_must_be_in_range": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6
-        ],
-        "max_consecutive_uses": null,
-        "method_variables": {},
-        "applies": [],
-        "effect_hook": "builtins:item_effect_template",
-        "requirements": {
-            "requires": {
-                "square": "Square"
-            },
-            "restrictions": {
-                "square": {
-                    "only_side": null,
-                    "only_lines": null,
-                    "only_columns": null,
-                    "everything_except": null,
-                    "only_descriptor": null,
-                    "only_empty": null,
-                    "exclude_inner_requires": null
-                }
-            }
-        },
-        "consecutive_use_reset_on_cooldown_update": true
-    },
     "healing_potion": {
         "decorations": {
             "name": "builtins:healing_potion.name",
-            "sprite": "builtins:item",
+            "sprite": "builtins:healing_potion",
             "description": "builtins:healing_potion.desc"
         },
-        "usage_cost": 1,
-        "cooldown": 1,
-        "is_consumable": true,
+        "usageCost": 1,
+        "cooldown": {
+            "current": 0,
+            "max": 0
+        },
+        "uses": {
+            "current": 0,
+            "max": 0
+        },
+        "consecutiveUseResetOnCooldownUpdate": false,
+        "isConsumable": true,
         "quantity": 1,
-        "caster_must_be_in_range": [
+        "casterMustBeInRange": [
             1,
             2,
             3,
@@ -57,31 +25,54 @@
             5,
             6
         ],
-        "max_consecutive_uses": null,
-        "method_variables": {
-            "time_thrown_dice": 1,
-            "sides_of_dice": 6,
-            "type_of_hp_change": "heal",
-            "element_of_hp_change": "builtins:physical"
+        "memory": {
+            "dice": {
+                "type": "dice",
+                "value": {
+                    "sides": 1,
+                    "amount": 6
+                },
+                "display_name": "builtins:healing_potion.dice",
+                "internal": false
+            }
         },
-        "applies": [],
-        "effect_hook": "builtins:hp_change_item",
+        "applies": {},
         "requirements": {
             "requires": {
                 "square": "Square"
-            },
-            "restrictions": {
-                "square": {
-                    "only_side": null,
-                    "only_lines": null,
-                    "only_columns": null,
-                    "everything_except": null,
-                    "only_descriptor": null,
-                    "only_empty": null,
-                    "exclude_inner_requires": null
-                }
             }
         },
-        "consecutive_use_reset_on_cooldown_update": true
+        "tags": [
+            "builtins:healing",
+            "builtins:physical"
+        ]
+    },
+    "error": {
+        "decorations": {
+            "name": "builtins:error.name",
+            "sprite": "builtins:error",
+            "description": "builtins:error.desc"
+        },
+        "usageCost": 0,
+        "cooldown": {
+            "current": 0,
+            "max": 0
+        },
+        "uses": {
+            "current": 0,
+            "max": 0
+        },
+        "consecutiveUseResetOnCooldownUpdate": false,
+        "isConsumable": false,
+        "quantity": 1,
+        "casterMustBeInRange": false,
+        "memory": null,
+        "applies": {},
+        "requirements": {
+            "requires": {
+                "square": "Square"
+            }
+        },
+        "tags": []
     }
 }
