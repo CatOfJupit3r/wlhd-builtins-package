@@ -33,7 +33,7 @@ fireball = SpellGameComponent(
         "tags": ["builtins:pyromancy"],
     },
 ).with_memory(
-    dice=MemoryFactory.dice(3, 8, "builtins:fireball.dice", False),
+    dice=MemoryFactory.dice(3, 8, "builtins:dice", False),
     type_of_hp_change=MemoryFactory.string("damage", "builtins:type_of_hp_change", False),
     element_of_hp_change=MemoryFactory.string("builtins:fire", "builtins:element_of_hp_change", False),
 )

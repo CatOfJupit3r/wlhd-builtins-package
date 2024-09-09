@@ -36,7 +36,7 @@ healing_potion = ItemGameComponent(
         'tags': ['builtins:healing', 'builtins:physical'],
     }
 ).with_memory(
-    dice=MemoryFactory.dice(1, 6, "builtins:healing_potion.dice", False),
+    dice=MemoryFactory.dice(1, 6, "builtins:dice", False),
 )
 
 holder.add(healing_potion, 'healing_potion')

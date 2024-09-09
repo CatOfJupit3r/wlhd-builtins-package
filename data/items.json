@@ -32,7 +32,7 @@
                     "sides": 1,
                     "amount": 6
                 },
-                "display_name": "builtins:healing_potion.dice",
+                "display_name": "builtins:dice",
                 "internal": false
             }
         },

@@ -28,7 +28,7 @@
                     "sides": 3,
                     "amount": 8
                 },
-                "display_name": "builtins:fireball.dice",
+                "display_name": "builtins:dice",
                 "internal": false
             },
             "type_of_hp_change": {

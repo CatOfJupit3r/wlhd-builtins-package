@@ -39,7 +39,7 @@ hero = EntityGameComponent(
                 "isActive": True,
                 "memory": {
                     "linked_item_id": MemoryFactory.component_id("1", "builtins:linked_item_id"),
-                    "dice": MemoryFactory.dice(1, 6, "builtins:fireball.dice", False),
+                    "dice": MemoryFactory.dice(1, 6, "builtins:dice", False),
                 }
             }],
             "maxActiveSpells": 12,
