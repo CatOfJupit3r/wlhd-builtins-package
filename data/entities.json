@@ -14,9 +14,9 @@
             "knownSpells": [],
             "maxActiveSpells": 0
         },
-        "statusEffects": {},
-        "inventory": {},
-        "weaponry": {},
+        "statusEffects": [],
+        "inventory": [],
+        "weaponry": [],
         "states": {
             "builtins:can_act": -1,
             "builtins:alive": -1
@@ -67,7 +67,7 @@
             ],
             "maxActiveSpells": 12
         },
-        "statusEffects": {},
+        "statusEffects": [],
         "inventory": [
             {
                 "descriptor": "builtins:healing_potion",
@@ -111,7 +111,7 @@
             "knownSpells": [],
             "maxActiveSpells": 0
         },
-        "statusEffects": {},
+        "statusEffects": [],
         "inventory": [
             {
                 "descriptor": "builtins:healing_potion",
@@ -120,7 +120,7 @@
                 "current_consecutive_uses": 0
             }
         ],
-        "weaponry": {},
+        "weaponry": [],
         "states": {},
         "addedCosts": {},
         "tags": [
@@ -146,14 +146,14 @@
             "knownSpells": [],
             "maxActiveSpells": 0
         },
-        "statusEffects": {},
+        "statusEffects": [],
         "inventory": [
             {
                 "descriptor": "builtins:healing_potion",
                 "quantity": 5
             }
         ],
-        "weaponry": {},
+        "weaponry": [],
         "states": {},
         "addedCosts": {},
         "tags": [
