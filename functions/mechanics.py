@@ -2,13 +2,11 @@ from typing import Literal
 
 from engine.entities import Entity
 from engine.game_hooks import HookContext, MechanicsHooks
-from engine.items import Item
 from engine.spells.spell import Spell
-from engine.status_effects import StatusEffect
 from engine.weapons import Weapon
 from models.exceptions import AbortError
 from models.game import HpChange, Square, Dice
-from models.hold_types import HoldTypes
+from models.tstring import TString
 
 custom_hooks = MechanicsHooks()
 
@@ -39,7 +37,7 @@ def _heal(ctx: HookContext, target: Entity, value: HpChange, changed_by: Entity,
         "builtins:creature_healed",
         entity_name=target.get_name(),
         value=str(value.value),
-        element_of_hp_change=value.element_of_hp_change
+        element_of_hp_change=TString.hp_change_type(value.element_of_hp_change)
     )
     return value.value
 
@@ -63,7 +61,7 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
                 "builtins:creature_takes_damage_shield_broken",
                 entity_name=target.get_name(),
                 damage=str(value.value),
-                element_of_hp_change=value.element_of_hp_change,
+                element_of_hp_change=TString.hp_change_type(value.element_of_hp_change),
                 damage_remaining=str(abs(remaining_armor))
             )
             value.value = abs(remaining_armor)
@@ -82,7 +80,7 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
         "builtins:creature_takes_damage",
         entity_name=target.get_name(),
         damage=str(value.value),
-        element_of_hp_change=value.element_of_hp_change
+        element_of_hp_change=TString.hp_change_type(value.element_of_hp_change)
     )
     target.increment_attribute('current_health',
                                -(value.value - target.get_attribute(value.element_of_hp_change + '_defense')))
@@ -103,7 +101,7 @@ def attribute_change(self: HookContext, target: Entity, name_of_attribute: str, 
     self.add_cmd(
         "builtins:creature_attribute_changed",
         entity_name=target.get_name(),
-        attribute_name=name_of_attribute,
+        attribute_name=TString.attribute(name_of_attribute),
         value=str(value_to_increment)
     )
     return value_to_increment
@@ -226,7 +224,7 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
 @custom_hooks.hook(name="use_defense", schema={
     "user": Entity
 })
-def use_defense(self: HookContext, user: Entity, **requires_parameters) -> int:
+def use_defense(self: HookContext, user: Entity, **_) -> int:
     if user.get_state("builtins:can_defend") is False:
         raise AbortError(
             "builtins:creature_cant_defend",
@@ -350,10 +348,9 @@ def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
 })
 def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = False, avoid_import_error: bool = True,
               **_):
-    spell_preset = self.import_data(HoldTypes.SPELL, spell_id, avoid_import_error=avoid_import_error)
-    if spell_preset is None:
+    spell = self.import_component('SPELL', spell_id, avoid_import_error=avoid_import_error)
+    if spell is None:
         raise ValueError("builtins:spell_not_found")
-    spell = Spell.fromPreset(spell_preset)
     if not silent:
         self.add_cmd(
             "builtins:add_spell_usage",
@@ -370,10 +367,9 @@ def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = Fal
     "silent": bool
 })
 def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False, avoid_import_error: bool = True, **_):
-    item_preset = self.import_data(HoldTypes.ITEM, item_id, avoid_import_error=avoid_import_error)
-    if item_preset is None:
+    item = self.import_component('ITEM', item_id, avoid_import_error=avoid_import_error)
+    if item is None:
         raise ValueError("builtins:item_not_found")
-    item = Item.fromPreset(item_preset)
     if not silent:
         self.add_cmd(
             "builtins:add_item_usage",
@@ -391,10 +387,9 @@ def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False
 })
 def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: bool = False,
                avoid_import_error: bool = True, **_):
-    weapon_preset = self.import_data(HoldTypes.WEAPON, weapon_descriptor, avoid_import_error=avoid_import_error)
-    if weapon_preset is None:
+    weapon = self.import_component('WEAPON', weapon_descriptor, avoid_import_error=avoid_import_error)
+    if weapon is None:
         raise ValueError("builtins:weapon_not_found")
-    weapon = Weapon.fromPreset(weapon_preset)
     if not silent:
         self.add_cmd(
             "builtins:add_weapon_usage",
@@ -412,10 +407,9 @@ def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: 
 })
 def apply_status_effect(self: HookContext, applied_to: Entity, status_effect_descriptor: str,
                         applied_by: Entity | None = None, avoid_import_error: bool = True, **kwargs):
-    status_effect_preset = self.import_data(HoldTypes.STATUS_EFFECT, status_effect_descriptor, avoid_import_error)
-    if status_effect_preset is None:
+    status_effect = self.import_component('STATUS_EFFECT', status_effect_descriptor, avoid_import_error)
+    if status_effect is None:
         raise ValueError(f"Status effect with descriptor {status_effect_descriptor} not found.")
-    status_effect = StatusEffect(**status_effect_preset)
     status_effect.apply(self, applied_to, applied_by, **kwargs)
     return None
 
@@ -455,7 +449,7 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
 
 
 @custom_hooks.hook(name="summon_entity", schema={
-    "preset_id": str,
+    "entity_descriptor": str,
     "preferred_square": Square,
     "summoner": Entity | None,
     "initiative_option": Literal["last", "first", "random", "after_summoner"],
@@ -464,7 +458,7 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
 })
 def summon_entity(
         self: HookContext,
-        preset_id: str,
+        entity_descriptor: str,
         preferred_square: Square,
         summoner: Entity | None,
         initiative_option: Literal["last", "first", "random", "after_summoner"] = "after_summoner",
@@ -473,10 +467,9 @@ def summon_entity(
         avoid_import_error: bool = True,
         **_
 ):
-    entity_preset = self.import_data(HoldTypes.ENTITY, preset_id, avoid_import_error=avoid_import_error)
-    if entity_preset is None:
-        raise AbortError("builtins:no_summon_not_found_entity", entity_name=preset_id)
-    entity = Entity('builtins:something_something')
+    entity = self.import_component('ENTITY', entity_descriptor, avoid_import_error=avoid_import_error)
+    if entity is None:
+        raise AbortError("builtins:no_summon_not_found_entity", entity_name=entity_descriptor)
     if self.battlefield[preferred_square.line, preferred_square.column] is not None:
         if dismiss_if_occupied:
             return None
@@ -503,24 +496,21 @@ def summon_entity(
         apply_status_effect(self, entity_ptr, "builtins:summoned_with_deletion", summoner)
     else:
         apply_status_effect(self, entity_ptr, "builtins:summoned", summoner)
-    if isinstance(initiative_option, int):
-        entity_ptr.initiative = initiative_option
-    else:
-        match initiative_option:
-            case "after_summoner":
-                if summoner is None:
-                    entity_ptr.initiative = 0
-                else:
-                    entity_ptr.initiative = self.battlefield[
-                                                preferred_square.line, preferred_square.column].initiative + 0.5
-            case "last":
-                entity_ptr.initiative = -1
-            case "first":
-                entity_ptr.initiative = 999
-            case "random":
-                entity_ptr.initiative = None  # arrange_queue will roll initiative if None
+
+    if self.turn_queue is not None:
+        if initiative_option == "after_summoner":
+            if summoner is None:
+                self.turn_queue.add_end_of_round(entity_ptr.id)
+            else:
+                self.turn_queue.insert_after(entity_ptr.id, summoner.id)
+        elif initiative_option == "last":
+            self.turn_queue.add_end_of_round(entity_ptr.id)
+        elif initiative_option == "first":
+            self.turn_queue.add_start_of_round(entity_ptr.id)
+        elif initiative_option == "random":
+            self.turn_queue.add_random_point(entity_ptr.id)
+
     self.resubscribe_entity(entity_ptr)
-    self.arrange_queue.emit(initiative_reroll=False)
     return None
 
 

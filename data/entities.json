@@ -1,9 +1,9 @@
 {
     "entity_error": {
         "decorations": {
-            "name": "builtins:error.name",
-            "sprite": "builtins:error",
-            "description": "builtins:error.desc"
+            "name": "builtins:characters.error.name",
+            "sprite": "builtins:characters.error",
+            "description": "builtins:characters.error.desc"
         },
         "attributes": {
             "builtins:current_health": -1,
@@ -27,9 +27,9 @@
     },
     "hero": {
         "decorations": {
-            "name": "builtins:hero.name",
-            "sprite": "builtins:hero",
-            "description": "builtins:hero.desc"
+            "name": "builtins:characters.hero.name",
+            "sprite": "builtins:characters.hero",
+            "description": "builtins:characters.hero.desc"
         },
         "attributes": {
             "builtins:current_health": -1,
@@ -49,6 +49,7 @@
                             "type": "component_id",
                             "value": "1",
                             "display_name": "builtins:linked_item_id",
+                            "display_value": null,
                             "internal": false
                         },
                         "dice": {
@@ -58,6 +59,7 @@
                                 "amount": 6
                             },
                             "display_name": "builtins:dice",
+                            "display_value": null,
                             "internal": false
                         }
                     }
@@ -93,9 +95,9 @@
     },
     "target_dummy": {
         "decorations": {
-            "name": "builtins:target_dummy.name",
-            "sprite": "builtins:target_dummy",
-            "description": "builtins:target_dummy.desc"
+            "name": "builtins:characters.target_dummy.name",
+            "sprite": "builtins:characters.target_dummy",
+            "description": "builtins:characters.target_dummy.desc"
         },
         "attributes": {
             "builtins:current_health": -1,
@@ -128,9 +130,9 @@
     },
     "target_dummy_large": {
         "decorations": {
-            "name": "builtins:target_dummy.name",
-            "sprite": "builtins:target_dummy",
-            "description": "builtins:target_dummy.desc"
+            "name": "builtins:characters.target_dummy_large.name",
+            "sprite": "builtins:characters.target_dummy_large",
+            "description": "builtins:characters.target_dummy_large.desc"
         },
         "attributes": {
             "builtins:current_health": -1,

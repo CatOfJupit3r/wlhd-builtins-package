@@ -2,13 +2,14 @@ from engine.component_memory import MemoryFactory
 from engine.game_hooks import EntityComponentsHolder
 from engine.game_hooks.component_holder.game_component import EntityGameComponent
 from models.decorations import Decoration
+from models.tstring import TString
 
 holder = EntityComponentsHolder()
 
 entity_error = EntityGameComponent(
     'entity_error',
     {
-        "decorations": Decoration("builtins:error.name", "builtins:error", "builtins:error.desc"),
+        "decorations": TString.decorations("builtins:error", "character"),
         "attributes": {
             "builtins:current_health": -1,
             "builtins:max_health": 1,
@@ -24,7 +25,7 @@ entity_error = EntityGameComponent(
 hero = EntityGameComponent(
     'hero',
     {
-        "decorations": Decoration("builtins:hero.name", "builtins:hero", "builtins:hero.desc"),
+        "decorations": TString.decorations("builtins:hero", "character"),
         "attributes": {
             "builtins:current_health": -1,
             "builtins:max_health": 100,
@@ -66,7 +67,7 @@ hero = EntityGameComponent(
 target_dummy = EntityGameComponent(
     'target_dummy',
     {
-        "decorations": Decoration("builtins:target_dummy.name", "builtins:target_dummy", "builtins:target_dummy.desc"),
+        "decorations": TString.decorations("builtins:target_dummy", "character"),
         "attributes": {
             "builtins:current_health": -1,
             "builtins:max_health": 100,
@@ -88,7 +89,7 @@ target_dummy = EntityGameComponent(
 target_dummy_large = EntityGameComponent(
     'target_dummy_large',
     {
-        "decorations": Decoration("builtins:target_dummy.name", "builtins:target_dummy", "builtins:target_dummy.desc"),
+        "decorations": TString.decorations("builtins:target_dummy_large", "character"),
         "attributes": {
             "builtins:current_health": -1,
             "builtins:max_health": 250,

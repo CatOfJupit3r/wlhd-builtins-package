@@ -11,7 +11,7 @@ custom_hooks = ItemHooks()
 
 def get_weapon_target(ctx: HookContext, item: Item, square: Square) -> List[Entity]:
     return ctx.battlefield.get_entities_by_string(
-        item.memory.get('type_of_radius', 'single_target'),
+        item.memory.get('type_of_radius') or 'single_target',
         square
     )
 
@@ -48,11 +48,12 @@ def hp_change_item(self: HookContext, item: Item, item_user: Entity, square: str
 
 @custom_hooks.hook(name="applies_status_effect_item", schema_name="APPLIES_STATUS_EFFECT")
 def applies_status_effect_item(self: HookContext, item: Item, item_user: Entity, square: str, **_) -> None:
-    square: Square = Square.from_str(square)
-    targets = get_weapon_target(self, item, square)
-    for target in targets:
-        if item.memory.get('status_effect') is not None:
-            target.add_status_effect(item.memory['status_effect'], owner=item_user)
+    # square: Square = Square.from_str(square)
+    # targets = get_weapon_target(self, item, square)
+    # for target in targets:
+    #     if item.memory.get('status_effect') is not None:
+    #         target.status_effects.add_effect(item.memory['status_effect'], owner=item_user)
+    pass
 
 
 @custom_hooks.hook(name="change_attribute_item", schema_name="CHANGE_ATTRIBUTE")
@@ -66,8 +67,9 @@ def change_attribute_item(self: HookContext, item: Item, item_user: Entity, squa
 
 @custom_hooks.hook(name="add_item_item", schema_name="ADD_ITEM")
 def add_item_item(self: HookContext, item: Item, item_user: Entity, square: str, **_) -> None:
-    square: Square = Square.from_str(square)
-    targets = get_weapon_target(self, item, square)
-    for target in targets:
-        if item.memory.get('item') is not None:
-            target.inventory.add_item(item.memory['item'])
+    # square: Square = Square.from_str(square)
+    # targets = get_weapon_target(self, item, square)
+    # for target in targets:
+    #     if item.memory.get('item') is not None:
+    #         target.inventory.add_item(item.memory['item'])
+    pass

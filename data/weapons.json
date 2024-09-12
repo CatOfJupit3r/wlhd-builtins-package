@@ -1,19 +1,15 @@
 {
     "weapon_error": {
         "decorations": {
-            "name": "builtins:weapon_error",
-            "sprite": "builtins:weapon_error",
-            "description": "builtins:weapon_error.desc"
+            "name": "builtins:weapons.weapon_error.name",
+            "sprite": "builtins:weapons.weapon_error",
+            "description": "builtins:weapons.weapon_error.desc"
         },
         "usageCost": 0,
-        "cooldown": {
-            "current": 0,
-            "max": 0
-        },
-        "uses": {
-            "current": 0,
-            "max": 0
-        },
+        "turnsUntilUsage": 0,
+        "cooldownValue": 0,
+        "currentConsecutiveUses": 0,
+        "maxConsecutiveUses": 0,
         "consecutiveUseResetOnCooldownUpdate": false,
         "isConsumable": false,
         "quantity": 1,
@@ -30,19 +26,15 @@
     },
     "regular_sword": {
         "decorations": {
-            "name": "builtins:sword",
-            "sprite": "builtins:sword",
-            "description": "builtins:sword.desc"
+            "name": "builtins:weapons.regular_sword.name",
+            "sprite": "builtins:weapons.regular_sword",
+            "description": "builtins:weapons.regular_sword.desc"
         },
         "usageCost": 1,
-        "cooldown": {
-            "current": 0,
-            "max": 0
-        },
-        "uses": {
-            "current": 0,
-            "max": 0
-        },
+        "turnsUntilUsage": 0,
+        "cooldownValue": 0,
+        "currentConsecutiveUses": 0,
+        "maxConsecutiveUses": 0,
         "consecutiveUseResetOnCooldownUpdate": false,
         "isConsumable": false,
         "quantity": 1,
@@ -57,19 +49,22 @@
                     "sides": 1,
                     "amount": 6
                 },
-                "display_name": "builtins:dice",
+                "display_name": "builtins:memories.dice",
+                "display_value": null,
                 "internal": false
             },
             "type_of_hp_change": {
                 "type": "string",
                 "value": "damage",
-                "display_name": "builtins:type_of_hp_change",
+                "display_name": "builtins:memories.type_of_hp_change",
+                "display_value": null,
                 "internal": false
             },
             "element_of_hp_change": {
                 "type": "string",
                 "value": "builtins:physical",
-                "display_name": "builtins:element_of_hp_change",
+                "display_name": "builtins:memories.element_of_hp_change",
+                "display_value": "builtins:hp_change_types.physical",
                 "internal": false
             }
         },
@@ -92,19 +87,15 @@
     },
     "hero_sword": {
         "decorations": {
-            "name": "builtins:sword",
-            "sprite": "builtins:sword",
-            "description": "builtins:sword.desc"
+            "name": "builtins:weapons.hero_sword.name",
+            "sprite": "builtins:weapons.hero_sword",
+            "description": "builtins:weapons.hero_sword.desc"
         },
         "usageCost": 1,
-        "cooldown": {
-            "current": 0,
-            "max": 0
-        },
-        "uses": {
-            "current": 0,
-            "max": 0
-        },
+        "turnsUntilUsage": 0,
+        "cooldownValue": 0,
+        "currentConsecutiveUses": 0,
+        "maxConsecutiveUses": 0,
         "consecutiveUseResetOnCooldownUpdate": false,
         "isConsumable": false,
         "quantity": 1,
@@ -116,22 +107,25 @@
             "dice": {
                 "type": "dice",
                 "value": {
-                    "sides": 3,
-                    "amount": 8
+                    "sides": 1,
+                    "amount": 6
                 },
-                "display_name": "builtins:dice",
+                "display_name": "builtins:memories.dice",
+                "display_value": null,
                 "internal": false
             },
             "type_of_hp_change": {
                 "type": "string",
                 "value": "damage",
-                "display_name": "builtins:type_of_hp_change",
+                "display_name": "builtins:memories.type_of_hp_change",
+                "display_value": null,
                 "internal": false
             },
             "element_of_hp_change": {
                 "type": "string",
                 "value": "builtins:fire",
-                "display_name": "builtins:element_of_hp_change",
+                "display_name": "builtins:memories.element_of_hp_change",
+                "display_value": "builtins:hp_change_types.fire",
                 "internal": false
             }
         },

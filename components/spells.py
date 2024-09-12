@@ -4,14 +4,14 @@ from engine.game_hooks.component_holder.game_component import SpellGameComponent
 from engine.requirements import RequiresTemplates
 from models.decorations import Decoration
 from models.game import Ranges
+from models.tstring import TString
 
 holder = SpellComponentsHolder()
 
 spell_error = SpellGameComponent(
     'spell_error',
     {
-        "decorations": Decoration(name="builtins:spell_error", sprite="builtins:spell_error",
-                                  description="builtins:spell_error.desc"),
+        "decorations": TString.decorations("builtins:spell_error", "spell"),
         "usageCost": 999,
         "cooldownValue": 999,
         "effectHook": "builtins:default_spell_hook",
@@ -21,8 +21,7 @@ spell_error = SpellGameComponent(
 fireball = SpellGameComponent(
     'fireball',
     {
-        "decorations": Decoration(name="builtins:fireball", sprite="builtins:pyromancy",
-                                  description="builtins:fireball.desc"),
+        "decorations": TString.decorations("builtins:fireball", "spell"),
         "usageCost": 1,
         "casterMustBeInRange": Ranges.ALL_EXCEPT_SAFE,
         "cooldownValue": 0,
@@ -33,9 +32,9 @@ fireball = SpellGameComponent(
         "tags": ["builtins:pyromancy"],
     },
 ).with_memory(
-    dice=MemoryFactory.dice(3, 8, "builtins:dice", False),
-    type_of_hp_change=MemoryFactory.string("damage", "builtins:type_of_hp_change", False),
-    element_of_hp_change=MemoryFactory.string("builtins:fire", "builtins:element_of_hp_change", False),
+    dice=MemoryFactory.dice(3, 8, TString.memory('builtins:dice'), False),
+    type_of_hp_change=MemoryFactory.string("damage", TString.memory("builtins:type_of_hp_change"), False),
+    element_of_hp_change=MemoryFactory.string("builtins:fire", TString.memory("builtins:element_of_hp_change"), False),
 )
 
 holder.add(fireball, 'fireball')

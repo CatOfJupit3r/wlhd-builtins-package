@@ -1,19 +1,15 @@
 {
     "healing_potion": {
         "decorations": {
-            "name": "builtins:healing_potion.name",
-            "sprite": "builtins:healing_potion",
-            "description": "builtins:healing_potion.desc"
+            "name": "builtins:items.healing_potion.name",
+            "sprite": "builtins:items.healing_potion",
+            "description": "builtins:items.healing_potion.desc"
         },
         "usageCost": 1,
-        "cooldown": {
-            "current": 0,
-            "max": 0
-        },
-        "uses": {
-            "current": 0,
-            "max": 0
-        },
+        "turnsUntilUsage": 0,
+        "cooldownValue": 0,
+        "currentConsecutiveUses": 0,
+        "maxConsecutiveUses": 0,
         "consecutiveUseResetOnCooldownUpdate": false,
         "isConsumable": true,
         "quantity": 1,
@@ -32,7 +28,8 @@
                     "sides": 1,
                     "amount": 6
                 },
-                "display_name": "builtins:dice",
+                "display_name": "builtins:memories.dice",
+                "display_value": null,
                 "internal": false
             }
         },
@@ -49,19 +46,15 @@
     },
     "error": {
         "decorations": {
-            "name": "builtins:error.name",
-            "sprite": "builtins:error",
-            "description": "builtins:error.desc"
+            "name": "builtins:items.error.name",
+            "sprite": "builtins:items.error",
+            "description": "builtins:items.error.desc"
         },
         "usageCost": 0,
-        "cooldown": {
-            "current": 0,
-            "max": 0
-        },
-        "uses": {
-            "current": 0,
-            "max": 0
-        },
+        "turnsUntilUsage": 0,
+        "cooldownValue": 0,
+        "currentConsecutiveUses": 0,
+        "maxConsecutiveUses": 0,
         "consecutiveUseResetOnCooldownUpdate": false,
         "isConsumable": false,
         "quantity": 1,

@@ -1,19 +1,15 @@
 {
     "fireball": {
         "decorations": {
-            "name": "builtins:fireball",
-            "sprite": "builtins:pyromancy",
-            "description": "builtins:fireball.desc"
+            "name": "builtins:spells.fireball.name",
+            "sprite": "builtins:spells.fireball",
+            "description": "builtins:spells.fireball.desc"
         },
         "usageCost": 1,
-        "cooldown": {
-            "current": 0,
-            "max": 0
-        },
-        "uses": {
-            "current": 0,
-            "max": 1
-        },
+        "turnsUntilUsage": 0,
+        "cooldownValue": 0,
+        "currentConsecutiveUses": 0,
+        "maxConsecutiveUses": 1,
         "consecutiveUseResetOnCooldownUpdate": true,
         "casterMustBeInRange": [
             2,
@@ -28,19 +24,22 @@
                     "sides": 3,
                     "amount": 8
                 },
-                "display_name": "builtins:dice",
+                "display_name": "builtins:memories.dice",
+                "display_value": null,
                 "internal": false
             },
             "type_of_hp_change": {
                 "type": "string",
                 "value": "damage",
-                "display_name": "builtins:type_of_hp_change",
+                "display_name": "builtins:memories.type_of_hp_change",
+                "display_value": null,
                 "internal": false
             },
             "element_of_hp_change": {
                 "type": "string",
                 "value": "builtins:fire",
-                "display_name": "builtins:element_of_hp_change",
+                "display_name": "builtins:memories.element_of_hp_change",
+                "display_value": null,
                 "internal": false
             }
         },
@@ -55,19 +54,15 @@
     },
     "spell_error": {
         "decorations": {
-            "name": "builtins:spell_error",
-            "sprite": "builtins:spell_error",
-            "description": "builtins:spell_error.desc"
+            "name": "builtins:spells.spell_error.name",
+            "sprite": "builtins:spells.spell_error",
+            "description": "builtins:spells.spell_error.desc"
         },
         "usageCost": 999,
-        "cooldown": {
-            "current": 0,
-            "max": 999
-        },
-        "uses": {
-            "current": 0,
-            "max": 0
-        },
+        "turnsUntilUsage": 0,
+        "cooldownValue": 999,
+        "currentConsecutiveUses": 0,
+        "maxConsecutiveUses": 0,
         "consecutiveUseResetOnCooldownUpdate": false,
         "casterMustBeInRange": false,
         "memory": null,

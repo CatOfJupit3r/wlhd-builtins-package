@@ -187,7 +187,7 @@ def shield_activate(hooks: HookContext, status_effect: StatusEffect, applied_to:
         else:
             hp_change.value = 0
     else:
-        status_effect.memory["shield_hp"] = remaining_hp_of_shield
+        status_effect.memory.change("shield_hp", remaining_hp_of_shield)
         hp_change.value = 0
     return status_effect.dispel(hooks) if needs_to_be_dispelled else None
 
@@ -203,7 +203,10 @@ STATUSES THAT CHANGE STATE OF TARGET
 def state_change_activate(hooks: HookContext, status_effect: StatusEffect, applied_to: Entity, changed_for: Entity,
                           **kwargs):
     for _ in range(status_effect.memory.get('times')) or 1:
-        changed_for.change_state(status_effect.memory['state'], status_effect.memory['mode'])
+        mode = status_effect.memory.get('mode')
+        if mode is None or mode not in ["+", "-"]:
+            mode = "+"
+        changed_for.change_state(status_effect.memory['state'], mode)
 
 
 @custom_hooks.hook(name="state_change_dispel", schema_name="DISPEL")

@@ -1,16 +1,15 @@
-from engine.component_memory import GameMemory, MemoryFactory
+from engine.component_memory import MemoryFactory
 from engine.game_hooks import StatusEffectComponentsHolder
 from engine.game_hooks.component_holder.game_component import StatusEffectGameComponent
 from engine.status_effects.status_effect import MethodHooks
-from models.decorations import Decoration
+from models.tstring import TString
 
 holder = StatusEffectComponentsHolder()
 
 status_effect_error = StatusEffectGameComponent(
     'status_effect_error',
     {
-        "decorations": Decoration(name="builtins:status_effect_error.name", sprite="builtins:status_effect_error",
-                                  description="builtins:status_effect_error.desc"),
+        "decorations": TString.decorations("builtins:status_effect_error", "status_effect"),
         "duration": 1,
         "updateType": "round_beginning",
         "activationType": "round_beginning",
@@ -22,8 +21,7 @@ status_effect_error = StatusEffectGameComponent(
 moved = StatusEffectGameComponent(
     'moved',
     {
-        "decorations": Decoration(name="builtins:moved.name", sprite="builtins:moved",
-                                  description="builtins:moved.desc"),
+        "decorations": TString.decorations("builtins:moved", "status_effect"),
         "duration": 1,
         "updateType": "round_beginning",
         "activationType": "round_beginning",
@@ -35,8 +33,7 @@ moved = StatusEffectGameComponent(
 fainted = StatusEffectGameComponent(
     'fainted',
     {
-        "decorations": Decoration(name="builtins:fainted.name", sprite="builtins:fainted",
-                                  description="builtins:fainted.desc"),
+        "decorations": TString.decorations("builtins:fainted", "status_effect"),
         "duration": 1,
         "updateType": "round_beginning",
         "activationType": "one_time",
@@ -47,16 +44,15 @@ fainted = StatusEffectGameComponent(
         "static": False
     },
 ).with_memory(
-    state=MemoryFactory.string("builtins:can_act", "builtins:state_changed", False),
-    mode=MemoryFactory.string("-", "builtins:state_change_mode", False),
+    state=MemoryFactory.string("builtins:can_act", TString.memory("builtins:state_changed"), False),
+    mode=MemoryFactory.string("-", TString.memory("builtins:state_change_mode"), False),
     times=MemoryFactory.number(5, internal=True),
 )
 
 summoned = StatusEffectGameComponent(
     'summoned',
     {
-        "decorations": Decoration(name="builtins:summoned.name", sprite="builtins:summoned",
-                                  description="builtins:summoned.desc"),
+        "decorations": TString.decorations("builtins:summoned", "status_effect"),
         "duration": None,
         "updateType": "one_time",
         "activationType": "one_time",
@@ -68,8 +64,7 @@ summoned = StatusEffectGameComponent(
 summoned_with_deletion = StatusEffectGameComponent(
     'summoned_with_deletion',
     {
-        "decorations": Decoration(name="builtins:summoned_with_deletion.name", sprite="builtins:summoned_with_deletion",
-                                  description="builtins:summoned_with_deletion.desc"),
+        "decorations": TString.decorations("builtins:summoned_with_deletion", "status_effect"),
         "duration": None,
         "updateType": "round_beginning",
         "activationType": "one_time",

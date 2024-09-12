@@ -2,15 +2,15 @@ from engine.component_memory import MemoryFactory
 from engine.game_hooks import WeaponComponentsHolder
 from engine.game_hooks.component_holder.game_component import WeaponGameComponent
 from engine.requirements import RequiresTemplates
-from models.decorations import Decoration
 from models.game import Ranges
+from models.tstring import TString
 
 holder = WeaponComponentsHolder()
 
 weapon_error = WeaponGameComponent(
     'weapon_error',
     {
-        "decorations": Decoration("builtins:weapon_error", "builtins:weapon_error", "builtins:weapon_error.desc"),
+        "decorations": TString.decorations("builtins:weapon_error", "weapon"),
         "quantity": 1,
         "usageCost": 0,
         "cooldownValue": 0,
@@ -24,7 +24,7 @@ weapon_error = WeaponGameComponent(
 regular_sword = WeaponGameComponent(
     'regular_sword',
     {
-        "decorations": Decoration("builtins:sword", "builtins:sword", "builtins:sword.desc"),
+        "decorations": TString.decorations("builtins:regular_sword", "weapon"),
         "quantity": 1,
         "usageCost": 1,
         "cooldownValue": 0,
@@ -35,16 +35,16 @@ regular_sword = WeaponGameComponent(
         'requirements': RequiresTemplates.ANY_MELEE
     }
 ).with_memory(
-    dice=MemoryFactory.dice(1, 6, "builtins:dice", False),
-    type_of_hp_change=MemoryFactory.string("damage", "builtins:type_of_hp_change", False),
-    element_of_hp_change=MemoryFactory.string("builtins:physical", "builtins:element_of_hp_change",
-                                              False),
+    dice=MemoryFactory.dice(1, 6, TString.memory('builtins:dice'), False),
+    type_of_hp_change=MemoryFactory.string("damage", TString.memory("builtins:type_of_hp_change"), False),
+    element_of_hp_change=MemoryFactory.string("builtins:physical", TString.memory("builtins:element_of_hp_change"),
+                                              False, TString.hp_change_type('builtins:physical')),
 )
 
 hero_sword = WeaponGameComponent(
     'hero_sword',
     {
-        "decorations": Decoration("builtins:sword", "builtins:sword", "builtins:sword.desc"),
+        "decorations": TString.decorations("builtins:hero_sword", "weapon"),
         "quantity": 1,
         "usageCost": 1,
         "cooldownValue": 0,
@@ -56,10 +56,10 @@ hero_sword = WeaponGameComponent(
         'tags': ['builtins:fire'],
     }
 ).with_memory(
-    dice=MemoryFactory.dice(3, 8, "builtins:dice", False),
-    type_of_hp_change=MemoryFactory.string("damage", "builtins:type_of_hp_change", False),
-    element_of_hp_change=MemoryFactory.string("builtins:fire", "builtins:element_of_hp_change",
-                                              False),
+    dice=MemoryFactory.dice(1, 6, TString.memory('builtins:dice'), False),
+    type_of_hp_change=MemoryFactory.string("damage", TString.memory("builtins:type_of_hp_change"), False),
+    element_of_hp_change=MemoryFactory.string("builtins:fire", TString.memory("builtins:element_of_hp_change"), False,
+                                              TString.hp_change_type('builtins:fire')),
 )
 
 holder.add(weapon_error, 'weapon_error')

@@ -4,13 +4,14 @@ from engine.game_hooks.component_holder.game_component import ItemGameComponent
 from engine.requirements import RequiresTemplates
 from models.decorations import Decoration
 from models.game import Ranges
+from models.tstring import TString
 
 holder = ItemComponentsHolder()
 
 item_error = ItemGameComponent(
     'error',
     {
-        "decorations": Decoration("builtins:error.name", "builtins:error", "builtins:error.desc"),
+        "decorations": TString.decorations("builtins:error", "item"),
         "quantity": 1,
         "turnsUntilUsage": 0,
         "currentConsecutiveUses": 0,
@@ -23,8 +24,7 @@ item_error = ItemGameComponent(
 healing_potion = ItemGameComponent(
     'healing_potion',
     {
-        "decorations": Decoration("builtins:healing_potion.name", "builtins:healing_potion",
-                                  "builtins:healing_potion.desc"),
+        "decorations": TString.decorations("builtins:healing_potion", "item"),
         "quantity": 1,
         "turnsUntilUsage": 0,
         "currentConsecutiveUses": 0,
@@ -36,7 +36,7 @@ healing_potion = ItemGameComponent(
         'tags': ['builtins:healing', 'builtins:physical'],
     }
 ).with_memory(
-    dice=MemoryFactory.dice(1, 6, "builtins:dice", False),
+    dice=MemoryFactory.dice(1, 6, TString.memory('builtins:dice'), False),
 )
 
 holder.add(healing_potion, 'healing_potion')
