@@ -4,7 +4,7 @@ from engine.entities import Entity
 from engine.game_hooks import HookContext, WeaponHooks
 from engine.weapons import Weapon
 from models.exceptions import AbortError
-from models.game import Square, Dice, HpChange
+from models.game import Square, HpChange
 
 custom_hooks = WeaponHooks()
 
@@ -21,23 +21,17 @@ def hp_change_weapon(self: HookContext, weapon: Weapon, weapon_user: Entity, squ
     square: Square = Square.from_str(square)
     targets = get_weapon_target(self, weapon, square)
     for target in targets:
-        if weapon.memory['time_thrown_dice'] is not None:  # if it is a dice roll, then we roll it
-            damage_dice_roll = Dice(weapon.memory['time_thrown_dice'],
-                                    weapon.memory['sides_of_dice'])
+        hp_change_dice = weapon.memory.get("dice")
+        if hp_change_dice is not None:
             if weapon_user is not None:
-                damage = damage_dice_roll.roll(
+                damage = hp_change_dice.roll(
                     weapon_user.get_attribute(weapon.memory['element_of_hp_change'] + '_attack'))
             else:
-                damage = damage_dice_roll.roll()
+                damage = hp_change_dice.roll()
         else:  # if it is a value, then we take it
-            damage = weapon.memory['value']
+            damage = weapon.memory.get('value', 0)
         if weapon.memory.get('type_of_hp_change') is None:
             raise AbortError("Type of hp change is not defined")
-        hp_change_type = weapon.memory['type_of_hp_change']
-        if hp_change_type == "damage":
-            damage += weapon_user.get_attribute("weapon_attack_bonus")
-        elif hp_change_type == "heal":
-            damage += weapon_user.get_attribute("weapon_heal_bonus")
         hp_change = HpChange(damage,
                              weapon.memory['type_of_hp_change'],
                              weapon.memory['element_of_hp_change'],

@@ -2,7 +2,6 @@ from engine.component_memory import MemoryFactory
 from engine.game_hooks import ItemComponentsHolder
 from engine.game_hooks.component_holder.game_component import ItemGameComponent
 from engine.requirements import RequiresTemplates
-from models.decorations import Decoration
 from models.game import Ranges
 from models.tstring import TString
 
@@ -37,6 +36,9 @@ healing_potion = ItemGameComponent(
     }
 ).with_memory(
     dice=MemoryFactory.dice(1, 6, TString.memory('builtins:dice'), False),
+    type_of_hp_change=MemoryFactory.string("heal", TString.memory("builtins:type_of_hp_change"), False),
+    element_of_hp_change=MemoryFactory.string("builtins:physical", TString.memory("builtins:element_of_hp_change"),
+                                              False, TString.hp_change_type('builtins:physical')),
 )
 
 holder.add(healing_potion, 'healing_potion')

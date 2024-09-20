@@ -41,7 +41,8 @@ fainted = StatusEffectGameComponent(
             dispel="builtins:state_change_dispel",
             activate="builtins:state_change_activate",
         ),
-        "static": False
+        "static": False,
+        "isVisible": True
     },
 ).with_memory(
     state=MemoryFactory.string("builtins:can_act", TString.memory("builtins:state_changed"), False),

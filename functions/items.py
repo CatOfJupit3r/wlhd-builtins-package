@@ -4,7 +4,7 @@ from engine.entities import Entity
 from engine.game_hooks import HookContext, ItemHooks
 from engine.items import Item
 from models.exceptions import AbortError
-from models.game import Square, Dice, HpChange
+from models.game import Square, HpChange
 
 custom_hooks = ItemHooks()
 
@@ -21,15 +21,15 @@ def hp_change_item(self: HookContext, item: Item, item_user: Entity, square: str
     square: Square = Square.from_str(square)
     targets = get_weapon_target(self, item, square)
     for target in targets:
-        if item.memory['time_thrown_dice'] is not None:  # if it is a dice roll, then we roll it
-            damage_dice_roll = Dice(item.memory['time_thrown_dice'], item.memory['sides_of_dice'])
+        hp_change_dice = item.memory.get("dice")
+        if hp_change_dice is not None:
             if item_user is not None:
-                damage = damage_dice_roll.roll(
+                damage = hp_change_dice.roll(
                     item_user.get_attribute(item.memory['element_of_hp_change'] + '_attack'))
             else:
-                damage = damage_dice_roll.roll()
+                damage = hp_change_dice.roll()
         else:  # if it is a value, then we take it
-            damage = item.memory['value']
+            damage = item.memory.get('value', 0)
         if item.memory.get('type_of_hp_change') is None:
             raise AbortError("Type of hp change is not defined")
         hp_change_type = item.memory['type_of_hp_change']
