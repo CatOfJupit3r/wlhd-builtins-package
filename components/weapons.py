@@ -36,9 +36,8 @@ regular_sword = WeaponGameComponent(
     }
 ).with_memory(
     dice=MemoryFactory.dice(1, 6, TString.memory('builtins:dice'), False),
-    type_of_hp_change=MemoryFactory.string("damage", TString.memory("builtins:type_of_hp_change"), False),
-    element_of_hp_change=MemoryFactory.string("builtins:physical", TString.memory("builtins:element_of_hp_change"),
-                                              False, TString.hp_change_type('builtins:physical')),
+    type_of_hp_change=MemoryFactory.type_of_hp_change("damage"),
+    element_of_hp_change=MemoryFactory.element_of_hp_change("builtins:physical"),
 )
 
 hero_sword = WeaponGameComponent(
@@ -53,13 +52,12 @@ hero_sword = WeaponGameComponent(
         'isConsumable': False,
         'casterMustBeInRange': Ranges.MELEE,
         'requirements': RequiresTemplates.ANY_MELEE,
-        'tags': ['builtins:fire'],
+        'tags': ['builtins:pyromancy', 'builtins:physical'],
     }
 ).with_memory(
-    dice=MemoryFactory.dice(1, 6, TString.memory('builtins:dice'), False),
-    type_of_hp_change=MemoryFactory.string("damage", TString.memory("builtins:type_of_hp_change"), False),
-    element_of_hp_change=MemoryFactory.string("builtins:fire", TString.memory("builtins:element_of_hp_change"), False,
-                                              TString.hp_change_type('builtins:fire')),
+    dice=MemoryFactory.dice(2, 8, TString.memory('builtins:dice'), False),
+    type_of_hp_change=MemoryFactory.type_of_hp_change("damage"),
+    element_of_hp_change=MemoryFactory.element_of_hp_change("builtins:fire"),
 )
 
 holder.add(weapon_error, 'weapon_error')

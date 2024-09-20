@@ -1,7 +1,6 @@
 from engine.component_memory import MemoryFactory
 from engine.game_hooks import EntityComponentsHolder
 from engine.game_hooks.component_holder.game_component import EntityGameComponent
-from models.decorations import Decoration
 from models.tstring import TString
 
 holder = EntityComponentsHolder()
@@ -39,8 +38,8 @@ hero = EntityGameComponent(
                 "descriptor": "builtins:fireball",
                 "isActive": True,
                 "memory": {
-                    "linked_item_id": MemoryFactory.component_id("1", "builtins:linked_item_id"),
-                    "dice": MemoryFactory.dice(1, 6, "builtins:dice", False),
+                    "linked_item_id": MemoryFactory.component_id("1", TString.memory("builtins:linked_item_id")),
+                    "dice": MemoryFactory.dice(1, 6, TString.memory("builtins:dice"), False),
                 }
             }],
             "maxActiveSpells": 12,

@@ -37,7 +37,7 @@ def _heal(ctx: HookContext, target: Entity, value: HpChange, changed_by: Entity,
         "builtins:creature_healed",
         entity_name=target.get_name(),
         value=str(value.value),
-        element_of_hp_change=TString.hp_change_type(value.element_of_hp_change)
+        element_of_hp_change=TString.element_of_hp_change(value.element_of_hp_change)
     )
     return value.value
 
@@ -61,7 +61,7 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
                 "builtins:creature_takes_damage_shield_broken",
                 entity_name=target.get_name(),
                 damage=str(value.value),
-                element_of_hp_change=TString.hp_change_type(value.element_of_hp_change),
+                element_of_hp_change=TString.element_of_hp_change(value.element_of_hp_change),
                 damage_remaining=str(abs(remaining_armor))
             )
             value.value = abs(remaining_armor)
@@ -80,7 +80,7 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
         "builtins:creature_takes_damage",
         entity_name=target.get_name(),
         damage=str(value.value),
-        element_of_hp_change=TString.hp_change_type(value.element_of_hp_change)
+        element_of_hp_change=TString.element_of_hp_change(value.element_of_hp_change)
     )
     target.increment_attribute('current_health',
                                -(value.value - target.get_attribute(value.element_of_hp_change + '_defense')))

@@ -45,8 +45,8 @@ fainted = StatusEffectGameComponent(
         "isVisible": True
     },
 ).with_memory(
-    state=MemoryFactory.string("builtins:can_act", TString.memory("builtins:state_changed"), False),
-    mode=MemoryFactory.string("-", TString.memory("builtins:state_change_mode"), False),
+    state=MemoryFactory.state("builtins:can_act"),
+    mode=MemoryFactory.state_change_mode("-"),
     times=MemoryFactory.number(5, internal=True),
 )
 
