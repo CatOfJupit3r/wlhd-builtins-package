@@ -27,6 +27,7 @@ moved = StatusEffectGameComponent(
         "activationType": "round_beginning",
         "methodHooks": None,
         "static": False,
+        "isVisible": True
     },
 )
 
@@ -42,7 +43,7 @@ fainted = StatusEffectGameComponent(
             activate="builtins:state_change_activate",
         ),
         "static": False,
-        "isVisible": True
+        "isVisible": True,
     },
 ).with_memory(
     state=MemoryFactory.state("builtins:can_act"),
@@ -59,6 +60,7 @@ summoned = StatusEffectGameComponent(
         "activationType": "one_time",
         "methodHooks": None,
         "static": False,
+        "isVisible": True
     },
 )
 

@@ -27,6 +27,7 @@ def hp_change(self: HookContext, target: Entity, value: HpChange, changed_by: En
 def _heal(ctx: HookContext, target: Entity, value: HpChange, changed_by: Entity, **kwargs) -> int:
     ctx.emit_event('on_healed', changed_for=target, value=value, changed_by=changed_by, **kwargs)
     ctx.emit_event('on_heal', changed_for=target, value=value, changed_by=changed_by, **kwargs)
+
     if value.value > 0:
         if target.has_effect('builtins:fainted'):
             target.status_effects['builtins:fainted'].dispel(ctx)
@@ -34,7 +35,7 @@ def _heal(ctx: HookContext, target: Entity, value: HpChange, changed_by: Entity,
     if target.get_attribute('current_health') > target.get_attribute('max_health'):
         target.set_attribute('current_health', target.get_attribute('max_health'))
     ctx.add_cmd(
-        "builtins:creature_healed",
+        TString.game_event("builtins:creature_healed"),
         entity_name=target.get_name(),
         value=str(value.value),
         element_of_hp_change=TString.element_of_hp_change(value.element_of_hp_change)
@@ -46,9 +47,10 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
     ctx.emit_event('on_damaged', changed_for=target, value=value, changed_by=changed_by, **kwargs)
     ctx.emit_event('on_deal_damage', changed_for=target, value=value, changed_by=changed_by, **kwargs)
     ctx.emit_event('shield', changed_for=target, value=value, changed_by=changed_by, **kwargs)
+
     if target.get_state('builtins:damageable') is False or value.value == 0:
         ctx.add_cmd(
-            "builtins:creature_takes_no_damage",
+            TString.game_event("builtins:creature_takes_no_damage"),
             entity_name=target.get_name()
         )
         return 0
@@ -58,7 +60,7 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
         remaining_armor = target.get_attribute("current_armor") - value.value
         if remaining_armor <= 0:
             ctx.add_cmd(
-                "builtins:creature_takes_damage_shield_broken",
+                TString.game_event("builtins:creature_takes_damage_shield_broken"),
                 entity_name=target.get_name(),
                 damage=str(value.value),
                 element_of_hp_change=TString.element_of_hp_change(value.element_of_hp_change),
@@ -69,7 +71,7 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
         else:
             # ENTITY_NAME armor consumes DAMAGE. Remaining armor: REMAINING_ARMOR
             ctx.add_cmd(
-                "builtins:creature_takes_damage_shield",
+                TString.game_event("builtins:creature_takes_damage_shield"),
                 entity_name=target.get_name(),
                 remaining_armor=str(remaining_armor),
                 damage=str(value.value)
@@ -77,7 +79,7 @@ def _take_damage(ctx: HookContext, target: Entity, value: HpChange, changed_by: 
             target.set_attribute('current_armor', remaining_armor)
             value.value = 0
     ctx.add_cmd(
-        "builtins:creature_takes_damage",
+        TString.game_event("builtins:creature_takes_damage"),
         entity_name=target.get_name(),
         damage=str(value.value),
         element_of_hp_change=TString.element_of_hp_change(value.element_of_hp_change)
@@ -99,7 +101,7 @@ def attribute_change(self: HookContext, target: Entity, name_of_attribute: str, 
     target.increment_attribute(name_of_attribute, value_to_increment)
     # "NAME changed ATTRIBUTE_NAME by VALUE_TO_INCREMENT."
     self.add_cmd(
-        "builtins:creature_attribute_changed",
+        TString.game_event("builtins:creature_attribute_changed"),
         entity_name=target.get_name(),
         attribute_name=TString.attribute(name_of_attribute),
         value=str(value_to_increment)
@@ -114,7 +116,7 @@ def attribute_change(self: HookContext, target: Entity, name_of_attribute: str, 
 def spend_action_points(self: HookContext, target: Entity, value: int, **_) -> int:
     target.increment_attribute('current_action_points', -value)
     self.add_cmd(
-        "builtins:creature_spent_ap",
+        TString.game_event("builtins:creature_spent_ap"),
         entity_name=target.get_name(),
         value=str(value)
     )
@@ -126,7 +128,7 @@ def spend_action_points(self: HookContext, target: Entity, value: int, **_) -> i
             "builtins:exhausted"
         )
         self.add_cmd(
-            "builtins:creature_exhausted",
+            TString.game_event("builtins:creature_exhausted"),
             entity_name=target.get_name()
         )
     return value
@@ -149,7 +151,7 @@ def cast_spell(self: HookContext, caster: Entity, spell_id: str, **requires_para
         spell.turns_until_usage = spell.cooldown_value or 0
         spell.current_consecutive_uses = 0
     self.add_cmd(
-        "builtins:spell_usage",
+        TString.game_event("builtins:spell_usage"),
         entity_name=caster.get_name(),
         spell_name=spell.get_name()
     )  # will look into passing parameters to this.
@@ -177,7 +179,7 @@ def use_item(self: HookContext, user: Entity, item_id: str, **requires_parameter
         item.turns_until_usage = item.cooldown_value or 0
         item.current_consecutive_uses = 0
     self.add_cmd(
-        "builtins:item_usage",
+        TString.game_event("builtins:item_usage"),
         entity_name=user.get_name(),
         item_name=item.get_name()
     )
@@ -195,7 +197,8 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
     if user.get_state("builtins:can_attack") is False:
         raise AbortError(
             "builtins:creature_cant_attack",
-            entity_name=user.get_name())
+            entity_name=user.get_name()
+        )
     weapon_d: str = user.weaponry.active_weapon_id
     user.weaponry.check_weapon(weapon_d, user)
     weapon: Weapon = user.weaponry[weapon_d]
@@ -204,7 +207,7 @@ def use_attack(self: HookContext, user: Entity, **requires_parameters) -> int:
         weapon.turns_until_usage = weapon.cooldown_value or 0
         weapon.current_consecutive_uses = 0
     self.add_cmd(
-        "builtins:attack_usage",
+        TString.game_event("builtins:attack_usage"),
         entity_name=user.get_name(),
         weapon_name=weapon.get_name()
     )
@@ -231,7 +234,7 @@ def use_defense(self: HookContext, user: Entity, **_) -> int:
             entity_name=user.get_name()
         )
     self.add_cmd(
-        "builtins:defense_usage",
+        TString.game_event("builtins:defense_usage"),
         entity_name=user.get_name()
     )
     user.change_attribute(self, "current_armor", 10 + user.get_attribute("builtins:armor_bonus"))
@@ -249,21 +252,28 @@ def use_change_weapon(self: HookContext, user: Entity, weapon_id: str, **_) -> i
             entity_name=user.get_name()
         )
     if weapon_id not in user.weaponry:
-        raise ValueError(f"Weapon with id {weapon_id} not found.")
+        raise AbortError(
+            "builtins:weapon_not_found",
+            entity_name=user.get_name(),
+        )
     weapon = user.weaponry[weapon_id]
     if weapon.cost_to_switch > user.get_attribute("current_action_points"):
-        raise ValueError(f"User {user.get_name()} does not have enough action points to switch to weapon {weapon_id}.")
+        raise AbortError(
+            "builtins:not_enough_ap_for_weapon_switch",
+            entity_name=user.get_name(),
+            weapon_name=weapon.get_name()
+        )
     previous_weapon = user.weaponry.get_active_weapon()
     if previous_weapon is not None:
         self.add_cmd(
-            "builtins:change_weapon_usage_with_prev",
+            TString.game_event("builtins:change_weapon_usage_with_prev"),
             entity_name=user.get_name(),
             weapon_name=weapon.get_name(),
             previous_weapon_name=previous_weapon.get_name() if previous_weapon is not None else "-"
         )
     else:
         self.add_cmd(
-            "builtins:change_weapon_usage",
+            TString.game_event("builtins:change_weapon_usage"),
             entity_name=user.get_name(),
             weapon_name=weapon.get_name(),
         )
@@ -296,7 +306,7 @@ def use_movement(self: HookContext, user: Entity, square: str, uses_action_point
             entity_name=user.get_name(),
         )
     self.add_cmd(
-        "builtins:movement_usage",
+        TString.game_event("builtins:movement_usage"),
         entity_name=user.get_name(),
         square=str(square)
     )
@@ -324,7 +334,7 @@ def use_swap(self: HookContext, first: Square, second: Square, **_) -> int:
             second=str(second)
         )
     self.add_cmd(
-        "builtins:swap_usage",
+        TString.game_event("builtins:swap_usage"),
         first=str(first),
         second=str(second)
     )
@@ -353,7 +363,7 @@ def add_spell(self: HookContext, user: Entity, spell_id: str, silent: bool = Fal
         raise ValueError("builtins:spell_not_found")
     if not silent:
         self.add_cmd(
-            "builtins:add_spell_usage",
+            TString.game_event("builtins:add_spell_usage"),
             entity_name=user.get_name(),
             spell_name=spell.get_name()
         )
@@ -372,7 +382,7 @@ def add_item(self: HookContext, user: Entity, item_id: str, silent: bool = False
         raise ValueError("builtins:item_not_found")
     if not silent:
         self.add_cmd(
-            "builtins:add_item_usage",
+            TString.game_event("builtins:add_item_usage"),
             entity_name=user.get_name(),
             item_name=item.get_name()
         )
@@ -392,7 +402,7 @@ def add_weapon(self: HookContext, user: Entity, weapon_descriptor: str, silent: 
         raise ValueError("builtins:weapon_not_found")
     if not silent:
         self.add_cmd(
-            "builtins:add_weapon_usage",
+            TString.game_event("builtins:add_weapon_usage"),
             entity_name=user.get_name(),
             weapon_name=weapon.get_name()
         )
@@ -427,7 +437,7 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
         apply_status_effect(self, target, "builtins:fainted", damaged_by, changed_for=target)
         self.trigger_on_fainted(fainted=target, fainted_by=damaged_by)
         self.add_cmd(
-            "builtins:creature_fainted",
+            TString.game_event("builtins:creature_fainted"),
             entity_name=target.get_name()
         )
         return True
@@ -435,7 +445,7 @@ def fainted_dead_mechanic(self: HookContext, target: Entity, damaged_by: Entity 
     elif is_fainted and is_alive and health_is_zero:
         self.trigger_on_death(died=target, killed_by=damaged_by)
         self.add_cmd(
-            "builtins:creature_died",
+            TString.game_event("builtins:creature_died"),
             entity_name=target.get_name()
         )
         # dead entities are removed on turn beginning
@@ -538,14 +548,14 @@ def make_fortitude_roll(
                                    )
     if safe_roll_result_equal_to_20 or (safe_roll_result_greater_than_barrier and not safe_roll_is_total_failure):
         self.add_cmd(
-            "builtins:successful_fortitude_roll",
+            TString.game_event("builtins:successful_fortitude_roll"),
             entity_name=target.get_name(),
             roll_type=fortitude_roll_type_name
         )
         return True, safe_roll_result
     else:
         self.add_cmd(
-            "builtins:failed_fortitude_roll",
+            TString.game_event("builtins:failed_fortitude_roll"),
             entity_name=target.get_name(),
             roll_type=fortitude_roll_type_name,
         )

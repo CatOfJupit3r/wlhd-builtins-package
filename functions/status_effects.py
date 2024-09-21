@@ -1,9 +1,11 @@
 import copy
 from typing import Literal
 
+
 from engine.entities import Entity
 from engine.game_hooks import HookContext, StatusEffectHooks
 from engine.status_effects import StatusEffect
+from models.exceptions import AbortError
 from models.game import HpChange, Dice
 
 custom_hooks: StatusEffectHooks = StatusEffectHooks()
@@ -13,7 +15,10 @@ custom_hooks: StatusEffectHooks = StatusEffectHooks()
 def default_apply_function(hooks: HookContext, applied_to: Entity, applied_by: Entity, status_effect: StatusEffect,
                            **kwargs) -> None:
     if applied_to is None:
-        raise ValueError("No target!")
+        raise AbortError(
+            "builtins:apply_effect_has_no_target",
+            component_name=status_effect.get_name()
+        )
     status_effect.owner = copy.deepcopy(applied_by)
     status_effect.applied_to_id = applied_to.id
     if status_effect.descriptor not in applied_to.status_effects:

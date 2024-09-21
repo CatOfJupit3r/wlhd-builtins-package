@@ -31,7 +31,10 @@ def hp_change_weapon(self: HookContext, weapon: Weapon, weapon_user: Entity, squ
         else:  # if it is a value, then we take it
             damage = weapon.memory.get('value', 0)
         if weapon.memory.get('type_of_hp_change') is None:
-            raise AbortError("Type of hp change is not defined")
+            raise AbortError(
+                "builtins:hp_change_type_undefined",
+                component_name=weapon.get_name()
+            )
         hp_change = HpChange(damage,
                              weapon.memory['type_of_hp_change'],
                              weapon.memory['element_of_hp_change'],
@@ -41,28 +44,49 @@ def hp_change_weapon(self: HookContext, weapon: Weapon, weapon_user: Entity, squ
         )
 
 
-@custom_hooks.hook(name="applies_status_effect_weapon", schema_name="APPLIES_STATUS_EFFECT")
-def applies_status_effect_weapon(self: HookContext, weapon: Weapon, weapon_user: Entity, square: str, **_) -> None:
-    square: Square = Square.from_str(square)
-    targets = get_weapon_target(self, weapon, square)
-    for target in targets:
-        if weapon.memory.get('status_effect') is not None:
-            target.add_status_effect(weapon.memory['status_effect'], owner=weapon_user)
-
-
 @custom_hooks.hook(name="change_attribute_weapon", schema_name="CHANGE_ATTRIBUTE")
 def change_attribute_weapon(self: HookContext, weapon: Weapon, weapon_user: Entity, square: str, **_) -> None:
     square: Square = Square.from_str(square)
     targets = get_weapon_target(self, weapon, square)
+    weapon_attribute = weapon.memory.get('attribute')
+
+    if weapon_attribute is None:
+        raise AbortError(
+            'builtins:attribute_changing_not_defined',
+            component_name=weapon.get_name()
+        )
+    weapon_attribute_change = weapon.memory.get('value')
+    if weapon_attribute_change is None:
+        raise AbortError(
+            'builtins:attribute_change_value_not_defined',
+            component_name=weapon.get_name()
+        )
+
     for target in targets:
-        if weapon.memory.get('attribute') is not None:
-            target.change_attribute(self, weapon.memory['attribute'], weapon.memory['value'])
+        if weapon_attribute is not None:
+            target.change_attribute(self, weapon_attribute, weapon_attribute_change)
+    # square: Square = Square.from_str(square)
+    # targets = get_weapon_target(self, weapon, square)
+    # for target in targets:
+    #     if weapon.memory.get('attribute') is not None:
+    #         target.change_attribute(self, weapon.memory['attribute'], weapon.memory['value'])
+
+
+@custom_hooks.hook(name="applies_status_effect_weapon", schema_name="APPLIES_STATUS_EFFECT")
+def applies_status_effect_weapon(self: HookContext, weapon: Weapon, weapon_user: Entity, square: str, **_) -> None:
+    pass
+    # square: Square = Square.from_str(square)
+    # targets = get_weapon_target(self, weapon, square)
+    # for target in targets:
+    #     if weapon.memory.get('status_effect') is not None:
+    #         target.add_status_effect(weapon.memory['status_effect'], owner=weapon_user)
 
 
 @custom_hooks.hook(name="add_item_weapon", schema_name="ADD_ITEM")
 def add_item_weapon(self: HookContext, weapon: Weapon, weapon_user: Entity, square: str, **_) -> None:
-    square: Square = Square.from_str(square)
-    targets = get_weapon_target(self, weapon, square)
-    for target in targets:
-        if weapon.memory.get('item') is not None:
-            target.inventory.add_item(weapon.memory['item'])
+    pass
+    # square: Square = Square.from_str(square)
+    # targets = get_weapon_target(self, weapon, square)
+    # for target in targets:
+    #     if weapon.memory.get('item') is not None:
+    #         target.inventory.add_item(weapon.memory['item'])
