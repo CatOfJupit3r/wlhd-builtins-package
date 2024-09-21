@@ -1,7 +1,7 @@
 from engine.component_memory import MemoryFactory
 from engine.game_hooks import EntityComponentsHolder
 from engine.game_hooks.component_holder.game_component import EntityGameComponent
-from models.tstring import TString
+from engine.models.tstring import TString
 
 holder = EntityComponentsHolder()
 

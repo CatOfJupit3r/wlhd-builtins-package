@@ -1,8 +1,8 @@
 from engine.component_memory import MemoryFactory
 from engine.game_hooks import StatusEffectComponentsHolder
 from engine.game_hooks.component_holder.game_component import StatusEffectGameComponent
-from engine.status_effects.status_effect import MethodHooks
-from models.tstring import TString
+from engine.components.status_effects.status_effect import MethodHooks
+from engine.models.tstring import TString
 
 holder = StatusEffectComponentsHolder()
 

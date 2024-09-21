@@ -1,9 +1,8 @@
 from engine.component_memory import MemoryFactory
 from engine.game_hooks import ItemComponentsHolder
 from engine.game_hooks.component_holder.game_component import ItemGameComponent
-from engine.requirements import RequiresTemplates
-from models.game import Ranges
-from models.tstring import TString
+from engine.actions.requirements import RequiresTemplates
+from engine.models import Ranges, TString
 
 holder = ItemComponentsHolder()
 

@@ -2,11 +2,11 @@ import copy
 from typing import Literal
 
 
-from engine.entities import Entity
+from engine.components.entities import Entity
 from engine.game_hooks import HookContext, StatusEffectHooks
-from engine.status_effects import StatusEffect
-from models.exceptions import AbortError
-from models.game import HpChange, Dice
+from engine.components.status_effects import StatusEffect
+from engine.models.exceptions import AbortError
+from engine.models import HpChange, Dice
 
 custom_hooks: StatusEffectHooks = StatusEffectHooks()
 

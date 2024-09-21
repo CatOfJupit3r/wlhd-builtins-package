@@ -1,10 +1,9 @@
 from typing import List
 
-from engine.entities import Entity
+from engine.components.entities import Entity
 from engine.game_hooks import HookContext, ItemHooks
-from engine.items import Item
-from models.exceptions import AbortError
-from models.game import Square, HpChange, Dice
+from engine.components.items import Item
+from engine.models import Square, HpChange, Dice, AbortError
 
 custom_hooks = ItemHooks()
 

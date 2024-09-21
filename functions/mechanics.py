@@ -1,12 +1,10 @@
 from typing import Literal
 
-from engine.entities import Entity
+from engine.components.entities import Entity
+from engine.components.spells.spell import Spell
+from engine.components.weapons import Weapon
 from engine.game_hooks import HookContext, MechanicsHooks
-from engine.spells.spell import Spell
-from engine.weapons import Weapon
-from models.exceptions import AbortError
-from models.game import HpChange, Square, Dice
-from models.tstring import TString
+from engine.models import HpChange, Square, Dice, TString, AbortError
 
 custom_hooks = MechanicsHooks()
 

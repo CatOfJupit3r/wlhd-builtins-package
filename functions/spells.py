@@ -1,8 +1,7 @@
-from engine.entities import Entity
+from engine.components.entities import Entity
 from engine.game_hooks import SpellHooks, HookContext
-from engine.spells import Spell
-from models.exceptions import AbortError
-from models.game import Square, Dice, HpChange
+from engine.components.spells import Spell
+from engine.models import AbortError, Square, Dice, HpChange
 
 custom_hooks = SpellHooks()
 

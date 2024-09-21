@@ -1,10 +1,10 @@
 from typing import List
 
-from engine.entities import Entity
+from engine.components.entities import Entity
 from engine.game_hooks import HookContext, WeaponHooks
-from engine.weapons import Weapon
-from models.exceptions import AbortError
-from models.game import Square, HpChange
+from engine.components.weapons import Weapon
+from engine.models.exceptions import AbortError
+from engine.models import Square, HpChange
 
 custom_hooks = WeaponHooks()
 
