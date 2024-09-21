@@ -1,43 +1,11 @@
-from engine.component_memory import MemoryFactory
 from engine.game_hooks import ItemComponentsHolder
-from engine.game_hooks.component_holder.game_component import ItemGameComponent
-from engine.actions.requirements import RequiresTemplates
-from engine.models import Ranges, TString
+
+"""
+
+This file serves as a stub and does nothing
+as builtin code is part of engine itself
+
+"""
+
 
 holder = ItemComponentsHolder()
-
-item_error = ItemGameComponent(
-    'error',
-    {
-        "decorations": TString.decorations("builtins:error", "item"),
-        "quantity": 1,
-        "turnsUntilUsage": 0,
-        "currentConsecutiveUses": 0,
-        'effectHook': 'builtins:item_effect_template',
-        'isConsumable': False,
-        'requirements': RequiresTemplates.ANY_SQUARE,
-    }
-)
-
-healing_potion = ItemGameComponent(
-    'healing_potion',
-    {
-        "decorations": TString.decorations("builtins:healing_potion", "item"),
-        "quantity": 1,
-        "turnsUntilUsage": 0,
-        "currentConsecutiveUses": 0,
-        'effectHook': 'builtins:hp_change_item',
-        'isConsumable': True,
-        'usageCost': 1,
-        'casterMustBeInRange': Ranges.ALL,
-        'requirements': RequiresTemplates.ANY_SQUARE,
-        'tags': ['builtins:healing', 'builtins:physical'],
-    }
-).with_memory(
-    dice=MemoryFactory.dice(1, 6, TString.memory('builtins:dice'), False),
-    type_of_hp_change=MemoryFactory.type_of_hp_change("heal"),
-    element_of_hp_change=MemoryFactory.element_of_hp_change("builtins:physical"),
-)
-
-holder.add(healing_potion, 'healing_potion')
-holder.add(item_error, 'error')
