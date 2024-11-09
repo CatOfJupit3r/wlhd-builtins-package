@@ -73,7 +73,13 @@
     "tags": {
         "healing": "лікування",
         "damaging": "шкодження",
-        "pyromancy": "піромантія"
+        "pyromancy": "піромантія",
+        "mechanoid": "механоїд",
+        "undead": "нежить",
+        "fire": "вогонь",
+        "water": "вода",
+        "earth": "земля",
+        "human": "людина"
     },
     "actions": {
         "attack": {
