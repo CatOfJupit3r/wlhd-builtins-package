@@ -31,6 +31,20 @@
                 "display_name": "builtins:memories.dice",
                 "display_value": null,
                 "internal": false
+            },
+            "type_of_hp_change": {
+                "type": "string",
+                "value": "heal",
+                "display_name": "builtins:memories.type_of_hp_change",
+                "display_value": "builtins:healing",
+                "internal": false
+            },
+            "element_of_hp_change": {
+                "type": "string",
+                "value": "builtins:fire",
+                "display_name": "builtins:memories.element_of_hp_change",
+                "display_value": null,
+                "internal": false
             }
         },
         "applies": {},
