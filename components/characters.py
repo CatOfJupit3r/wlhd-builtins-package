@@ -1,4 +1,4 @@
-from engine.game_hooks import WeaponComponentsHolder
+from engine.game_hooks import CharacterComponentsHolder
 
 """
 
@@ -7,4 +7,4 @@ as builtin code is part of engine itself
 
 """
 
-holder = WeaponComponentsHolder()
+holder = CharacterComponentsHolder()

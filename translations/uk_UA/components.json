@@ -1,6 +1,6 @@
 {
     "characters" : {
-        "entity_error" : {
+        "character_error" : {
             "name" : "Помилка",
             "desc" : "Тут повинна була бути істота, але поплач <3."
         },

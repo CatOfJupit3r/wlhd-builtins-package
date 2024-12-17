@@ -1,5 +1,5 @@
 {
-    "your_turn": "Твій хід! Ти керуєш \"{{entity_name}\" ({{line}}/{{column}}). ОД: {{current_action_points}}/{{max_action_points}}.",
+    "your_turn": "Твій хід! Ти керуєш \"{{creature_name}\" ({{line}}/{{column}}). ОД: {{current_action_points}}/{{max_action_points}}.",
     "win": "Перемога!",
     "lose": "Поразка!",
     "draw": "Нічия!",

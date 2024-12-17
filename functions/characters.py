@@ -1,4 +1,4 @@
-from engine.game_hooks import EntityHooks
+from engine.game_hooks import CharacterHooks
 
 """
 
@@ -7,4 +7,4 @@ as builtin code is part of engine itself
 
 """
 
-custom_hooks = EntityHooks()
+custom_hooks = CharacterHooks()

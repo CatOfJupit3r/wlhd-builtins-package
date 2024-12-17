@@ -7,5 +7,4 @@ as builtin code is part of engine itself
 
 """
 
-
 holder = ItemComponentsHolder()

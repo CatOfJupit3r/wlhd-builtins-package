@@ -47,7 +47,6 @@
                 "internal": false
             }
         },
-        "applies": {},
         "requirements": {
             "requires": {
                 "square": "Square"
@@ -74,7 +73,6 @@
         "quantity": 1,
         "casterMustBeInRange": false,
         "memory": null,
-        "applies": {},
         "requirements": {
             "requires": {
                 "square": "Square"

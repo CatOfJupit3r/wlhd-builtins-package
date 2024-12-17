@@ -1,5 +1,5 @@
 {
-    "entity_error": {
+    "character_error": {
         "decorations": {
             "name": "builtins:characters.error.name",
             "sprite": "builtins:characters.error",
