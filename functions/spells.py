@@ -1,4 +1,4 @@
-from engine.game_hooks import SpellHooks
+from engine.core import SpellHooks
 
 """
 

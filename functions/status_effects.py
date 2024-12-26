@@ -1,4 +1,4 @@
-from engine.game_hooks import StatusEffectHooks
+from engine.core import StatusEffectHooks
 
 """
 

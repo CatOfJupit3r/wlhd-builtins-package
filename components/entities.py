@@ -1,4 +1,4 @@
-from engine.game_hooks import EntityComponentsHolder
+from engine.core import EntityComponentsHolder
 
 """
 

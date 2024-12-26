@@ -1,4 +1,4 @@
-from engine.game_hooks import MechanicsHooks
+from engine.core import MechanicsHooks
 
 """
 

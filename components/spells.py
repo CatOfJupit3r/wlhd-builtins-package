@@ -1,4 +1,4 @@
-from engine.game_hooks import SpellComponentsHolder
+from engine.core import SpellComponentsHolder
 
 """
 

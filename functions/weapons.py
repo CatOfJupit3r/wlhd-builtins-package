@@ -1,4 +1,4 @@
-from engine.game_hooks import WeaponHooks
+from engine.core import WeaponHooks
 
 """
 

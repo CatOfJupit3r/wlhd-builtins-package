@@ -1,4 +1,4 @@
-from engine.game_hooks import WeaponComponentsHolder
+from engine.core import WeaponComponentsHolder
 
 """
 

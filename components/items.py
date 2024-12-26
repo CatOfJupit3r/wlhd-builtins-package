@@ -1,4 +1,4 @@
-from engine.game_hooks import ItemComponentsHolder
+from engine.core import ItemComponentsHolder
 
 """
 

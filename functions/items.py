@@ -1,4 +1,4 @@
-from engine.game_hooks import ItemHooks
+from engine.core import ItemHooks
 
 """
 

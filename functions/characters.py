@@ -1,4 +1,4 @@
-from engine.game_hooks import CharacterHooks
+from engine.core import CharacterHooks
 
 """
 

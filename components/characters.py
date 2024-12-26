@@ -1,4 +1,4 @@
-from engine.game_hooks import CharacterComponentsHolder
+from engine.core import CharacterComponentsHolder
 
 """
 
