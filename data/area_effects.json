@@ -1,0 +1,1 @@
+{"burning_floor":{"decorations":{"name":"builtins:area_effects.burning_floor.name","description":"builtins:area_effects.burning_floor.desc","sprite":"builtins:burning_floor"},"duration":0,"methodHooks":{"apply":null,"update":null,"dispel":null,"activate":"builtins:hp_change_dice_area_effect_activate"}}}
