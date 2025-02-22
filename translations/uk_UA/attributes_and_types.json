@@ -42,7 +42,16 @@
         "nature_defense": "захист від природи",
         "physical_attack": "фізичний урон",
         "physical_defense": "фізичний захист",
-        "coin_flips": "підкидання монети"
+        "coin_flips": "підкидання монети",
+        "base_armor": "базова броня",
+        "nature": "природа",
+        "fire": "вогонь",
+        "water": "вода",
+        "earth": "земля",
+        "air": "повітря",
+        "light": "світло",
+        "dark": "тьма",
+        "physical": "фізичний"
     },
     "hp_change_types": {
         "heal": "лікування",
@@ -61,7 +70,9 @@
     "memories": {
         "dice": "кубик",
         "type_of_hp_change": "тип зміни здоров'я",
-        "element_of_hp_change": "стихія зміни здоров'я"
+        "element_of_hp_change": "стихія зміни здоров'я",
+        "state": "стан",
+        "state_change_mode": "режим зміни стану"
     },
     "states": {
         "can_act": "може діяти"
@@ -74,6 +85,7 @@
         "healing": "лікування",
         "damaging": "шкодження",
         "pyromancy": "піромантія",
+        "physical": "фізичний",
         "mechanoid": "механоїд",
         "undead": "нежить",
         "fire": "вогонь",
